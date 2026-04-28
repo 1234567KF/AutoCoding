@@ -1,5 +1,7 @@
 # 多模块流水线开发（Pipeline Development）
 
+> 本模块基于 [gspowers](https://github.com/fshaan/gspowers) 框架扩展，遵循 MIT 许可证。
+
 ## 什么是 Pipeline 模式
 
 当项目包含**多个有依赖关系的模块**时，普通的 `subagent-dev` 无法处理模块间的执行顺序和依赖验证。Pipeline 模式通过**依赖解析**和**批次编排**，实现：

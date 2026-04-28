@@ -23,6 +23,21 @@
 
 ---
 
+## 第三方开源集成
+
+本项目集成了以下优秀的开源项目：
+
+| 集成项目 | 来源 | 许可证 | 用途 |
+|----------|------|--------|------|
+| [gspowers](https://github.com/fshaan/gspowers) | fshaan | MIT | SOP 流程导航 |
+| [frontend-slides](https://github.com/zarazhangrui/frontend-slides) | zarazhangrui | MIT | 演示文稿生成 |
+| [ruflo](https://github.com/ruvnet/ruflo) | ruvnet | MIT | 多 Agent 编排 |
+| [RTK](https://github.com/rafaelkallis/rtk) | rafaelkallis | MIT | Token 优化 |
+
+详见 [CREDITS.md](CREDITS.md) 完整致谢。
+
+---
+
 ## 快速开始
 
 ### 前置要求
@@ -83,6 +98,7 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 | [MANUAL.md](MANUAL.md) | 完整使用手册（给人看） |
 | [INSTALL.md](INSTALL.md) | AI 执行安装指南（给 AI 看） |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
+| [CREDITS.md](CREDITS.md) | 第三方开源项目致谢 |
 
 ---
 
