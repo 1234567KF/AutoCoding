@@ -67,6 +67,7 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 | `/office-hours` | YC 式产品拷问 | gspowers |
 | `/subagent-dev` | 子代理 TDD 开发 | gspowers |
 | `/pipeline-dev` | 多模块流水线开发 | gspowers |
+| `/frontend-slides` | 创建精美 HTML 演示文稿 | frontend-slides |
 | `安全审计` | 多 Agent 安全扫描 | ruflo |
 | `架构评审` | 多 Agent 系统架构评估 | ruflo |
 | `triple [任务]` | 通用三方协作 | ruflo |
@@ -104,6 +105,10 @@ AI编程智驾/
 │   ├── pre-commit.template
 │   ├── pipeline-example.md
 │   └── wiki-template.md
+│
+├── skills/                # 技能扩展
+│   ├── prd-generator/     # PRD 生成器
+│   └── frontend-slides/   # HTML 演示文稿生成器
 │
 └── gspowers-pipeline-patch/  # Pipeline 扩展
     ├── pipeline.md
