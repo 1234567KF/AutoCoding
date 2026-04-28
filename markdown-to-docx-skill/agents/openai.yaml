@@ -1,7 +1,0 @@
-interface:
-  display_name: "Markdown to DOCX"
-  short_description: "Convert Markdown files to DOCX with pandoc, images, captions, and optional Word templates"
-  default_prompt: "Use $markdown-to-docx to convert one Markdown file or a folder of articles into .docx files with pandoc."
-
-policy:
-  allow_implicit_invocation: true
