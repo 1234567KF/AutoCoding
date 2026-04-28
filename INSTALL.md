@@ -256,268 +256,68 @@ if (Get-Command claude-flow -ErrorAction SilentlyContinue) {
 }
 
 # 输出检测结果
-Write-Host "检测结果:" -ForegroundColor Cyan
-foreach ($key in $results.Keys) {
-    $status = if ($results[$key] -eq "found") { "✓" } else { "✗" }
-    Write-Host "  $status $key"
+    // ... 2013 lines omitted
 }
-```
-
-Linux (bash) 版本：
-
-```bash
-#!/bin/bash
-# 检测脚本
-
-check_command() {
-    if command -v $1 &> /dev/null; then
-        echo "✓ $1"
-    else
-        echo "✗ $1"
-    fi
+    // ... 2012 lines omitted
 }
-
-echo "检测结果:"
-check_command claude
-check_command git
-check_command node
-check_command npm
-check_command claude-flow
-```
-
----
-
-### 步骤 1：安装缺失基础工具
-
-#### 1.1 安装 Git（如缺失）
-
-```powershell
-# 检查是否有 winget
-if (Get-Command winget -ErrorAction SilentlyContinue) {
-    winget install -e --id Git.Git --silent --accept-package-agreements --accept-source-agreements
-} elseif (Get-Command choco -ErrorAction SilentlyContinue) {
-    choco install git -y
-} else {
-    # 手动下载安装
-    Write-Host "[需要用户介入] 请手动下载并安装 Git: https://git-scm.com/download/win"
+    // ... 2011 lines omitted
 }
-
-# 刷新环境变量
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-```
-
-#### 1.2 安装 Node.js（如缺失）
-
-```powershell
-if (Get-Command winget -ErrorAction SilentlyContinue) {
-    winget install -e --id OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements
-} else {
-    Write-Host "[需要用户介入] 请手动安装 Node.js: https://nodejs.org/"
+    // ... 2010 lines omitted
 }
-```
-
-#### 1.3 安装 Bun（如缺失，可选但推荐）
-
-```powershell
-if (Get-Command bun -ErrorAction SilentlyContinue) {
-    Write-Host "Bun 已安装"
-} else {
-    irm bun.sh/install.ps1 | iex
+    // ... 2009 lines omitted
 }
-```
-
----
-
-### 步骤 2：安装 Claude Code（如缺失）
-
-> Claude Code 是主要界面。如果用户有其他 AI 编程工具（如 Trae、Doubao），也可以直接使用，但本文档以 Claude Code 为例。
-
-```powershell
-if (Get-Command claude -ErrorAction SilentlyContinue) {
-    Write-Host "Claude Code 已安装"
-} else {
-    if (Get-Command winget -ErrorAction SilentlyContinue) {
-        # Claude Code 可能不在 winget 仓库，手动安装
-        Write-Host "正在安装 Claude Code..."
-        irm https://claude.ai/install.ps1 | iex
-    } else {
-        Write-Host "[需要用户介入] 请手动安装 Claude Code: https://claude.ai/code"
+    // ... 2008 lines omitted
     }
 }
-```
-
----
-
-### 步骤 3：配置 Claude Code API Token
-
-> **唯一需要用户介入的步骤**
-
-```powershell
-# 检查是否有 ANTHROPIC_API_KEY 或 CLAUDE_CODE_API_KEY
-if ($env:ANTHROPIC_API_KEY -or $env:CLAUDE_CODE_API_KEY) {
-    Write-Host "API Token 已配置"
-} else {
-    Write-Host "[需要用户介入] 请在 Claude Code 中运行: /config set api-key"
-    Write-Host "或者设置环境变量: $env:ANTHROPIC_API_KEY='your-key'"
+    // ... 2006 lines omitted
 }
-```
-
-### 步骤 3.1：MiniMax 成功配置案例（已验证）
-
-> **以下配置经过实际验证**，适用于 MiniMax API。如果使用其他 API 请调整对应字段。
-
-#### 配置文件路径
-
-| 平台        | 路径                                          |
-| ----------- | --------------------------------------------- |
-| Windows     | `C:\Users\你的用户名\.claude\settings.json` |
-| Linux/macOS | `~/.claude/settings.json`                   |
-
-#### 成功配置模板
-
-```json
+    // ... 2005 lines omitted
 {
-  "env": {
-    "ANTHROPIC_BASE_URL": "https://api.minimaxi.com/anthropic",
-    "ANTHROPIC_AUTH_TOKEN": "用户提供的Token",
-    "ANTHROPIC_MODEL": "MiniMax-M2.7",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "API_TIMEOUT_MS": "3000000"
-  },
-  "permissions": {
-    "defaultMode": "bypassPermissions"
-  },
-  "theme": "light",
-  "hasCompletedOnboarding": true,
-  "skipDangerousModePermissionPrompt": true
+    // ... 2004 lines omitted
 }
-```
-
-#### 字段说明
-
-| 字段                                         | 说明                     | 注意事项                                    |
-| -------------------------------------------- | ------------------------ | ------------------------------------------- |
-| `ANTHROPIC_BASE_URL`                       | MiniMax API 端点         | **必须填**，不能用官方 Anthropic 地址 |
-| `ANTHROPIC_AUTH_TOKEN`                     | 用户自己的 MiniMax Token | 向 MiniMax 服务商获取                       |
-| `ANTHROPIC_MODEL`                          | 模型名称                 | 使用 `MiniMax-M2.7`                       |
-| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | 减少非必要流量           | 设为 `"1"`                                |
-| `API_TIMEOUT_MS`                           | API 超时（毫秒）         | `3000000` = 5 分钟                        |
-| `permissions.defaultMode`                  | 权限模式                 | `bypassPermissions` = 跳过所有确认        |
-| `skipDangerousModePermissionPrompt`        | 跳过危险模式提示         | `true`                                    |
-
-#### Windows 创建配置
-
-```powershell
-# 创建目录
-$claudeDir = "$env:USERPROFILE\.claude"
-if (!(Test-Path $claudeDir)) { New-Item -ItemType Directory -Force -Path $claudeDir }
-
-# 写入配置（请替换 YOUR_TOKEN_HERE 为你的真实 Token）
-$config = @{
-    env = @{
-        ANTHROPIC_BASE_URL = "https://api.minimaxi.com/anthropic"
-        ANTHROPIC_AUTH_TOKEN = "YOUR_TOKEN_HERE"
-        ANTHROPIC_MODEL = "MiniMax-M2.7"
-        CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
-        API_TIMEOUT_MS = "3000000"
+    // ... 2003 lines omitted
     }
-    permissions = @{ defaultMode = "bypassPermissions" }
-    theme = "light"
-    hasCompletedOnboarding = $true
-    skipDangerousModePermissionPrompt = $true
+    // ... 2002 lines omitted
 }
-
-$config | ConvertTo-Json -Depth 10 | Out-File -FilePath "$claudeDir\settings.json" -Encoding UTF8
-
-Write-Host "✅ MiniMax 配置已创建: $claudeDir\settings.json"
-```
-
-#### 验证配置
-
-```powershell
-# 验证配置是否正确
-$settings = Get-Content "$env:USERPROFILE\.claude\settings.json" | ConvertFrom-Json
-Write-Host "当前模型: $($settings.env.ANTHROPIC_MODEL)"
-Write-Host "API 端点: $($settings.env.ANTHROPIC_BASE_URL)"
-```
-
-#### 常见错误
-
-| 错误现象             | 原因                | 解决方法                                                   |
-| -------------------- | ------------------- | ---------------------------------------------------------- |
-| `401 Unauthorized` | Token 无效或过期    | 检查 `ANTHROPIC_AUTH_TOKEN` 是否正确                     |
-| `403 Forbidden`    | Base URL 错误       | 确认使用 `https://api.minimaxi.com/anthropic`            |
-| 连接超时             | 网络问题或 URL 错误 | 检查 Base URL 拼写，确认为 `minimaxi` 不是 `anthropic` |
-| 模型不支持           | 模型名错误          | 使用 `MiniMax-M2.7`（不要用 `claude-` 前缀）           |
-
----
-
-### 步骤 3.2：安装 markitdown（MCP 文档转换工具）
-
-> markitdown 可以将 Markdown 转换为 HTML/其他格式，用于文档处理
-
-```powershell
-# 安装 markitdown MCP
-npx -y @digipair/skill-markitdown
-
-# 添加到 Claude Code
-claude mcp add markitdown -- npx -y @digipair/skill-markitdown
-
-# 验证
-claude mcp list
-```
-
-**markitdown 功能说明**：
-
-| 功能             | 说明                |
-| ---------------- | ------------------- |
-| Markdown 转 HTML | 将 MD 文件转为 HTML |
-| GitHub 风格表格  | 支持 GFM 表格       |
-| 代码高亮         | 自动识别代码块语言  |
-
----
-
-### 步骤 3.3：安装 prd-generator（PRD 生成技能）
-
-> prd-generator 是 SDD Excel 需求采集 → PRD 文档生成的技能，支持多轮需求访谈和结构化文档输出
-
-```powershell
-# 技能文件已随本框架打包在 skills/prd-generator/ 目录
-# AI 使用时直接引用即可，无需额外安装
-# 技能路径: skills/prd-generator/SKILL.md
-
-# 触发方式（在 Claude Code 对话中）：
-# 用户上传 SDD Excel 并说 "开始需求访谈"
-# AI 自动进入 Phase 1 需求收集流程
-
-# 技能功能：
-# 1. 需求访谈（Inversion Phase）：多轮提问确认需求
-# 2. SDD Excel 解析：读取 Sheet 数据填充 PRD 各章节
-# 3. 状态机生成：Mermaid state diagram 输出
-# 4. Gherkin 场景：验收标准 Scenario 输出
-```
-
-#### prd-generator 技能文件
-
-| 文件路径 | 说明 |
-|----------|------|
-| `skills/prd-generator/SKILL.md` | 技能定义（AI 必读） |
-| `skills/prd-generator/assets/prd-template.md` | PRD 模板 |
-| `skills/prd-generator/assets/sdd-excel-parsing-rules.md` | SDD Excel 解析规则 |
-| `skills/prd-generator/SDD需求采集-xxx.xlsx` | SDD 示例文件 |
-
-#### 触发词
-
-| 触发词 | 功能 |
-|--------|------|
-| `开始需求访谈` | 启动 Phase 1 需求收集 |
-| `解析 SDD Excel` | 读取 Excel 生成 PRD 各章节 |
-| `生成状态图` | 输出 Mermaid 状态图 |
-| `生成验收标准` | 输出 Gherkin Scenario |
-
----
-
-### 步骤 3.6：安装 RTK（Token 节省工具）
+    // ... 2001 lines omitted
+    }
+}
+    // ... 1999 lines omitted
+}
+    // ... 1998 lines omitted
+        }
+    // ... 1997 lines omitted
+        }
+    }
+}
+    // ... 1994 lines omitted
+    }
+    // ... 1993 lines omitted
+}
+    // ... 1992 lines omitted
+function Invoke-TDD-Cycle {
+    // ... 1991 lines omitted
+}
+    // ... 1990 lines omitted
+}
+    // ... 1989 lines omitted
+function New-ProjectWiki {
+    // ... 1988 lines omitted
+    }
+    // ... 1987 lines omitted
+}
+    // ... 1986 lines omitted
+}
+    // ... 1985 lines omitted
+  }
+    // ... 1984 lines omitted
+{
+    // ... 1983 lines omitted
+      }
+    // ... 1982 lines omitted
+  }
+}
+// ... 1980 more lines (total: 2271)### 步骤 3.6：安装 RTK（Token 节省工具）
 
 > RTK（Rust Token Killer）是一个高性能 CLI 代理，通过过滤和压缩命令输出，可节省 60-90% 的 token 消耗
 
