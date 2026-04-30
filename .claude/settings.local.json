@@ -1,6 +1,10 @@
 {
   "permissions": {
     "allow": [
+      "Bash(mkdir -p .claude/skills)",
+      "Bash(mv skills/* .claude/skills/)",
+      "Bash(rmdir skills *)",
+      "Bash(rtk git *)",
       "Skill(update-config)",
       "Bash(npm update *)",
       "Bash(npm install *)",
