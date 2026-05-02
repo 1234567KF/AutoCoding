@@ -1,10 +1,4 @@
 <p align="center">
-  <a href="https://github.com/1234567KF/AutoCoding/blob/main/assets/posters/%E5%AE%A3%E4%BC%A0%E6%B5%B7%E6%8A%A5_%E6%B5%85%E8%89%B2.html">
-    <img src="https://img.shields.io/badge/🖼️_浅色海报-HTML-0ea5e9?style=for-the-badge&logo=html5&logoColor=white" alt="浅色海报">
-  </a>
-  <a href="https://github.com/1234567KF/AutoCoding/blob/main/assets/posters/%E5%AE%A3%E4%BC%A0%E6%B5%B7%E6%8A%A5.html">
-    <img src="https://img.shields.io/badge/🌙_深色海报-HTML-6366f1?style=for-the-badge&logo=html5&logoColor=white" alt="深色海报">
-  </a>
   <a href="https://github.com/1234567KF/AutoCoding/blob/main/AICoding.md">
     <img src="https://img.shields.io/badge/⚡_单文件入口-AICoding.md-22c55e?style=for-the-badge" alt="单文件入口">
   </a>
@@ -19,7 +13,9 @@
 >
 > 总纲：[AICoding原则.docx](docs/AICoding原则.docx) — **稳 · 省 · 准 · 夯 · 快 · 懂**
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <img src="assets/posters/宣传海报_浅色.png" alt="AI编程智驾 宣传海报" width="900">
+</p>
 
 **AI编程智驾** 是一套完整的 AI 编程工作台，遵循七大原则，集成 Claude Code、gspowers SOP 导航、claude-flow 多 Agent 并行执行，15 个自建 kf- 系列技能覆盖从 PRD 到 Spec 到编码到审查的全链路。
 
@@ -47,17 +43,6 @@
 ```
 
 > 朋友那边无需装任何东西，无需下载任何文件，只需把上面这段话粘贴给 AI。
-
----
-
-## 宣传海报
-
-| 版本 | 预览 | 说明 |
-|------|------|------|
-| [🌙 深色版](assets/posters/宣传海报.html) | Qoder 风深蓝企业色系，Indigo 渐变，Antigravity 鼠标粒子特效 | 科技感强，适合截图分享 |
-| [☀️ 浅色版](assets/posters/宣传海报_浅色.html) | 蓝天/紫罗兰清新系，白色卡片布局，鼠标粒子特效 | 打印友好，白底高对比度 |
-
-> 双击 HTML 文件即可在浏览器中查看完整海报。海报涵盖：六字真言、AI 产出本质要素层级图、名门正派 vs 邪修双路线、33 Agent 蜂巢、需求设计/编码测试流水线。
 
 ---
 
