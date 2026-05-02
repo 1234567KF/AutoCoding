@@ -282,7 +282,6 @@ Project Local (AutoCoding/):
 │       ├── kf-prd-generator/  # PRD generation
 │       ├── kf-triple-collaboration/ # Triple collaboration
 │       ├── kf-ui-prototype-generator/ # UI prototype
-│       ├── kf-qoder/          # Qoder integration
 │       ├── kf-skill-design-expert/ # Skill design
 │       ├── gspowers/          # SOP navigation (upstream)
 │       └── gstack/            # Product flow (upstream)

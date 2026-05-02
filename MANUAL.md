@@ -224,7 +224,6 @@ Agent 共享（在同一个项目内的 agents 共享记忆）
 │       ├── kf-prd-generator/  # PRD 生成
 │       ├── kf-triple-collaboration/ # 三方协作
 │       ├── kf-ui-prototype-generator/ # UI 原型
-│       ├── kf-qoder/          # Qoder 集成
 │       ├── kf-skill-design-expert/ # Skill 设计
 │       ├── gspowers/          # SOP 导航（上游）
 │       └── gstack/            # 产品流程（上游）

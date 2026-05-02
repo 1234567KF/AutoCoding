@@ -148,7 +148,6 @@ AI编程智驾/
 │       ├── kf-prd-generator/       # PRD 生成器
 │       ├── kf-triple-collaboration/# 三方协作
 │       ├── kf-ui-prototype-generator/ # UI 原型
-│       ├── kf-qoder/               # Qoder 集成
 │       ├── kf-skill-design-expert/ # Skill 设计
 │       ├── kf-markdown-to-docx-skill/ # MD→DOCX
 │       ├── gspowers/               # SOP 导航（上游）
