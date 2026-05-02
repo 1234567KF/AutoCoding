@@ -56,19 +56,27 @@ metadata:
 ## 架构总览
 
 ```
-                         Swarm Init
+                    用户输入（任务描述 / SDD Excel / PRD）
                              │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-        红队 Pipeline    蓝队 Pipeline    绿队 Pipeline
-        (激进创新)       (稳健工程)       (安全保守)
-              │              │              │
-              └──────────────┼──────────────┘
-                             ▼
-                        裁判评分
-                             │
-                             ▼
-                        汇总融合 → 最终方案
+                    检测到 .xlsx？─── 是 ──→ Pre-Stage: kf-prd-generator → PRD.md
+                             │                        │
+                            否                        ▼
+                             │              三队均以 PRD.md 为输入
+                             └────────┬───────────────┘
+                                      ▼
+                                 Swarm Init
+                                      │
+                       ┌──────────────┼──────────────┐
+                       ▼              ▼              ▼
+                 红队 Pipeline    蓝队 Pipeline    绿队 Pipeline
+                 (激进创新)       (稳健工程)       (安全保守)
+                       │              │              │
+                       └──────────────┼──────────────┘
+                                      ▼
+                                 裁判评分
+                                      │
+                                      ▼
+                                 汇总融合 → 最终方案
 ```
 
 每队内部不是散兵游勇，而是 **6 阶段流水线**，阶段间有明确门控和产物交接。
@@ -91,14 +99,21 @@ Pre-Stage     Stage 0        Stage 1        Stage 2        Stage 3        Stage 
 
 ### Pre-Stage — 需求物料准备（条件触发）
 
-> **触发条件**：用户输入包含 SDD Excel 文件（`.xlsx`）时自动执行；否则跳过。
+> **触发条件**：用户输入包含 SDD Excel 文件（`.xlsx`）或用户说"写PRD"/"生成PRD"时自动执行；否则跳过。
 
 - **执行者**：协调者（本 Skill 自身，不 spawn agent）
-- **动作**：调用 `kf-prd-generator` 读取 SDD Excel，生成 PRD.md
-- **产出**：`PRD.md` — 结构化需求文档（背景、业务流、规则、页面）
-- **门控**：PRD.md 生成完成 → 三队 Stage 0 均以该 PRD 为输入
+- **动作**：
+  1. 检测用户输入中是否包含 `.xlsx` 文件路径，或用户显式要求"写PRD"
+  2. 若触发：`Skill({skill: "kf-prd-generator", args: "<文件路径或需求描述>"})`
+  3. kf-prd-generator 完成 Phase 1 需求问询 → Phase 1.5 技术栈检测 → Phase 2 生成 PRD.md
+  4. PRD.md 生成后，kf-prd-generator 自动调用 kf-alignment 做动后对齐
+- **产出**：`PRD.md` — 结构化需求文档（背景、业务流、规则、页面、验收标准）
+- **门控**：PRD.md 生成完成且通过 kf-prd-generator 的 Gate 1.5 机械化验证后 → 三队 Stage 0 均以该 PRD 为输入
+- **跳过条件**：用户未提供 .xlsx 且未要求写 PRD，且任务描述已足够清晰 → 直接进入 Phase 1
 
-正确的链路：`SDD Excel → kf-prd-generator → PRD.md → kf-spec → Spec → 夯 并发执行`
+**正确的链路**：`SDD Excel → kf-prd-generator → PRD.md → kf-spec → Spec → 夯 并发执行`
+
+**注意**：即使无 SDD Excel，只要任务描述模糊（如一句话需求），协调者也应主动建议用户先走 kf-prd-generator 做需求结构化，或走 kf-spec 做 Spec 驱动开发，再进入 `/夯` 并发竞争。
 
 ### Stage 0 — 需求对齐
 
@@ -169,11 +184,12 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 每队 3 个 agent 分工：
 
-| Agent | 流水线阶段 | 联动 |
-|-------|-----------|------|
-| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment`、`kf-web-search`（按需搜索技术方案） |
-| **集成测试** | Stage 3-4（测试→审查） | `kf-browser-ops`、`kf-code-review-graph`、`kf-web-search`（按需搜索测试方案） |
-| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator`、`kf-web-search`（按需搜索 UI 参考） |
+| Agent | 流水线阶段 | 联动 | 模型 |
+|-------|-----------|------|------|
+| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment`、`kf-web-search`（按需搜索技术方案） | `sonnet`（flash） |
+| **集成测试** | Stage 3-4（测试→审查） | `kf-browser-ops`、`kf-code-review-graph`、`kf-web-search`（按需搜索测试方案） | `sonnet`（flash） |
+| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator`、`kf-web-search`（按需搜索 UI 参考） | `sonnet`（flash） |
+| **协调者（本 Skill）** | Pre-Stage + Phase 1-4（任务拆解→裁判评分→汇总融合） | 全部 integrated-skills | `opus`（pro） |
 
 ---
 
@@ -206,14 +222,17 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 ### Phase 1 — 任务理解与拆解
 
+**上下文收集**：检查是否存在 PRD.md（来自 Pre-Stage）或 Spec 文档，若存在则作为任务理解的输入。
+
 输出统一任务规格：
 
 ```
 1. 任务目标（一句话）
-2. 硬约束（不可违反）
-3. 软约束（尽量满足）
-4. 评判维度及权重（默认见下方）
-5. 任务类型判定：编码开发 / 文档生成 / 方案评审
+2. 输入来源：[SDD Excel → PRD.md / 用户口述 / Spec 文档 / 其他]
+3. 硬约束（不可违反）
+4. 软约束（尽量满足）
+5. 评判维度及权重（默认见下方）
+6. 任务类型判定：编码开发 / 文档生成 / 方案评审
 ```
 
 默认评判维度：
@@ -234,12 +253,23 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 ### Phase 2 — Swarm + Pipeline 并发执行
 
-**三队流水线并行启动**：
+**三队流水线并行启动，每个 agent 按需自动分配模型**：
 
 ```
+0. 若 Pre-Stage 已产出 PRD.md，将 PRD.md 路径注入三队的 Stage 0 prompt 中作为输入
 1. swarm_init → hierarchical-mesh
 2. 为每队创建 Pipeline DAG: Stage0→Stage1→Stage2→Stage3→Stage4→Stage5
-3. 并行 spawn 三队的 Stage 0 agent（run_in_background: true）
+3. 并行 spawn 三队的 Stage 0 agent（run_in_background: true, model: "sonnet"）
+   每个 agent 的 prompt 中 MUST 包含：
+     - 若 PRD.md 存在：@PRD.md 文件引用
+     - 若 Spec 存在：@spec.md 文件引用
+     - 任务规格（Phase 1 输出）
+     - 本团队的角色定位（红/蓝/绿）
+   模型路由：
+     - 全栈开发 agent → model: "sonnet"（flash, 执行层面）
+     - 集成测试 agent → model: "sonnet"（flash, 执行层面）
+     - 前端设计师 agent → model: "sonnet"（flash, 执行层面）
+     - 协调者（本 Skill 自身）→ model: "opus"（pro, 规划+评判层面）
 4. Pipeline 自动推进：每阶段完成后自动触发下一阶段
 5. 等待三队全部流水线完成
 6. 收集各队 Stage 5 最终方案

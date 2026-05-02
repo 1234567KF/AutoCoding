@@ -83,6 +83,34 @@ Hook 脚本逻辑：
 省模式             # 自动进入执行模式（flash）
 ```
 
+### 方式 4：Agent 级模型路由（/夯 内部）★
+
+当 `/夯`（kf-multi-team-compete）通过 `Agent` 工具 spawn 子 Agent 时，
+每个 Agent 独立指定模型，互不干扰：
+
+```javascript
+// 协调者自身 → pro（opus 级推理，用于规划+评判+汇总）
+// 各队 worker Agent → flash（sonnet 级推理，用于编码+测试+设计）
+
+Agent({
+  description: "红队全栈开发",
+  model: "sonnet",       // ← flash 级别，高效执行
+  subagent_type: "...",
+  run_in_background: true
+})
+```
+
+**路由规则**：
+
+| 角色 | Agent 类型 | model 参数 | 实际模型 | 原因 |
+|------|-----------|-----------|---------|------|
+| 协调者 | 本 Skill 自身 | 不设置（继承父级） | `deepseek-v4-pro` | 深度推理：任务拆解、裁判评分、方案融合 |
+| 全栈开发 | agent_spawn | `"sonnet"` | `deepseek-v4-flash` | 高效执行：需求对齐、架构设计、编码实现 |
+| 集成测试 | agent_spawn | `"sonnet"` | `deepseek-v4-flash` | 高效执行：测试编写、代码审查 |
+| 前端设计师 | agent_spawn | `"sonnet"` | `deepseek-v4-flash` | 高效执行：UI 原型、方案汇总 |
+
+**切换时机**：Agent spawn 时即指定 model，整个 Agent 生命周期内不变。
+
 ---
 
 ## 各技能模型需求一览
@@ -90,7 +118,7 @@ Hook 脚本逻辑：
 | 技能 | 推荐模型 | 触发时机 |
 |------|---------|---------|
 | `kf-spec` | pro（Step 0-1），flash（Step 2-6） | Step 0 自动切 pro |
-| `kf-multi-team-compete` | pro（裁判+汇总），flash（各队 agent） | 启动时自动分配 |
+| `kf-multi-team-compete` `/夯` | pro（协调者+裁判+汇总），flash（各队 agent：全栈开发/集成测试/前端设计师） | 协调者启动时用 pro；spawn agent 时传入 `model: "sonnet"` → flash |
 | `kf-alignment` | pro | 启动时自动切 pro |
 | `kf-prd-generator` | flash | 启动时自动切 flash |
 | `kf-code-review-graph` | flash | 启动时自动切 flash |
