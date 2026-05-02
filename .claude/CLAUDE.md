@@ -18,7 +18,7 @@
 | `kf-multi-team-compete` | **`/夯`** | 夯 | **主入口**，自动调用 7 个技能 + Pipeline 引擎 | 红蓝绿队多 Agent 并发竞争评审 |
 | `kf-alignment` | `/对齐` | 懂 | 被 kf-spec、`/夯`、kf-prd-generator 自动调用 | 对齐工作流：动前谈理解，动后谈 diff |
 | `kf-model-router` | 模型路由 | 省 | **自动触发**：所有技能启动时自动检查并切换模型 | 模型智能路由：计划 pro，执行 flash，用户无感 |
-| `kf-prd-generator` | `/prd-generator` | 快 | 自动调用 kf-alignment（产出后 Hook 对齐） | SDD Excel → PRD 生成器 |
+| `kf-prd-generator` | `/prd-generator` | 快 | 自动调用 kf-alignment（产出后 Hook 对齐）；被 `/夯` Pre-Stage 自动调用 | SDD Excel → PRD 生成器 |
 | `kf-triple-collaboration` | triple | 夯 | 内部 spawn（轻量版 `/夯`） | 三方协作评审 |
 | `kf-ui-prototype-generator` | — | 快 | 被 `/夯` Stage 2/5 自动调用 | UI 原型 HTML 生成 |
 | `kf-skill-design-expert` | — | 稳 | 独立 | Skill 设计专家 |
@@ -92,6 +92,8 @@ claude
 用户触发 "/夯 [任务]"
   │
   ├─ kf-model-router 自动切换模型（pro/flash）
+  │
+  ├─ Pre-Stage：kf-prd-generator → PRD.md（条件触发：输入含 SDD Excel 时）
   │
   └─ 三队 Pipeline 并发（gspowers Pipeline 引擎）
        ├─ kf-alignment   ← 需求对齐（Stage 0）

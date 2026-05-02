@@ -38,6 +38,7 @@ metadata:
     - kf-ui-prototype-generator
     - kf-browser-ops
     - kf-web-search
+    - kf-prd-generator
     - kf-model-router
 ---
 
@@ -78,13 +79,24 @@ metadata:
 **上游阶段输出自动成为下游阶段输入。禁止跳过。**
 
 ```
-Stage 0        Stage 1        Stage 2        Stage 3        Stage 4        Stage 5
- 需求对齐  →    架构设计   →    编码实现   →    集成测试   →    代码审查   →    方案汇总
- (全栈开发)     (全栈开发)     (全栈开发)     (集成测试)     (集成测试)     (前端设计师)
-    │              │              │              │              │              │
-    ▼              ▼              ▼              ▼              ▼              ▼
- 对齐记录      架构方案       代码产物       测试报告       审查报告       团队方案
+Pre-Stage     Stage 0        Stage 1        Stage 2        Stage 3        Stage 4        Stage 5
+ 物料准备  →   需求对齐  →    架构设计   →    编码实现   →    集成测试   →    代码审查   →    方案汇总
+ (协调者)      (全栈开发)     (全栈开发)     (全栈开发)     (集成测试)     (集成测试)     (前端设计师)
+    │              │              │              │              │              │              │
+    ▼              ▼              ▼              ▼              ▼              ▼              ▼
+ PRD文档       对齐记录      架构方案       代码产物       测试报告       审查报告       团队方案
 ```
+
+### Pre-Stage — 需求物料准备（条件触发）
+
+> **触发条件**：用户输入包含 SDD Excel 文件（`.xlsx`）时自动执行；否则跳过。
+
+- **执行者**：协调者（本 Skill 自身，不 spawn agent）
+- **动作**：调用 `kf-prd-generator` 读取 SDD Excel，生成 PRD.md
+- **产出**：`PRD.md` — 结构化需求文档（背景、业务流、规则、页面）
+- **门控**：PRD.md 生成完成 → 三队 Stage 0 均以该 PRD 为输入
+
+正确的链路：`SDD Excel → kf-prd-generator → PRD.md → kf-spec → Spec → 夯 并发执行`
 
 ### Stage 0 — 需求对齐
 
@@ -348,6 +360,7 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 ## Gotchas
 
+- 输入为 SDD Excel（`.xlsx`）时，**必须先执行 Pre-Stage** 调用 `kf-prd-generator` 生成 PRD.md，链路：`SDD Excel → PRD.md → kf-spec → Spec → 夯并发`
 - 流水线阶段失败只阻塞该团队，不影响其他团队并行推进
 - Stage 2 编码阶段前端设计师可与全栈开发并行（UI 实现 + 后端实现独立）
 - 裁判评分前必须调用 `kf-alignment` 统一评分尺度，避免三队方案评分标准不一致
@@ -361,8 +374,9 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 | 技能 | 调用时机 | 用途 |
 |------|---------|------|
 | `kf-model-router` | 启动时 | 自动切换模型：裁判/汇总用 pro，各队 agent 用 flash |
+| `kf-prd-generator` | Pre-Stage（条件触发） | 输入为 SDD Excel 时自动调用，生成 PRD.md 作为需求基线 |
 | `kf-alignment` | Stage 0 + Phase 3 | 动前对齐 + 裁判评分标准对齐 |
-| `kf-spec` | Stage 0 | 读取 Spec 作为需求基线 |
+| `kf-spec` | Stage 0 | 读取 Spec/PRD 作为需求基线 |
 | `kf-web-search` | Stage 1/2/3（按需） | agent 搜索技术方案、最佳实践、测试方案、UI 参考 |
 | `kf-ui-prototype-generator` | Stage 2 + Stage 5 | 前端设计师 UI 原型生成 |
 | `kf-browser-ops` | Stage 3 | 集成测试 agent 自动化测试 |

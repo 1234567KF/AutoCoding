@@ -264,10 +264,10 @@ git log --oneline -3
 | `kf-code-review-graph` | `/review-graph` | 省 | 独立 | 无 | kf-multi-team-compete Stage 4（自动） | flash |
 | `kf-web-search` | `/web-search` | 准 | 独立（被动技能） | 无 | **kf-multi-team-compete agent 按需自动调用**、kf-spec 资料收集、用户手动 | flash |
 | `kf-browser-ops` | `/browser-ops` | 测的准 | 独立（被动技能） | 无 | **kf-multi-team-compete Stage 3 自动调用**、用户手动 | flash |
-| `kf-multi-team-compete` | **`/夯`** | 夯 | **内部 spawn + 自动调用** | kf-alignment、kf-spec、kf-browser-ops、kf-code-review-graph、**kf-web-search**、kf-ui-prototype-generator、gspowers Pipeline | **主入口**，用户手动 `/夯` | pro（裁判+汇总）+ flash（各队 agent） |
+| `kf-multi-team-compete` | **`/夯`** | 夯 | **内部 spawn + 自动调用** | kf-prd-generator（Pre-Stage）、kf-alignment、kf-spec、kf-browser-ops、kf-code-review-graph、**kf-web-search**、kf-ui-prototype-generator、gspowers Pipeline | **主入口**，用户手动 `/夯` | pro（裁判+汇总）+ flash（各队 agent） |
 | `kf-alignment` | `/对齐` | 懂 | 独立（被动技能） | 无 | **kf-spec 自动调用**、**kf-multi-team-compete Stage 0/Phase 3 自动调用**、kf-prd-generator Hook 自动调用 | pro |
 | `kf-model-router` | 模型路由 | 省 | **自动触发**（Hook） | 无 | **所有声明 recommended_model 的技能启动时自动调用** | —（路由器本身） |
-| `kf-prd-generator` | `/prd-generator` | 快 | **自动调用** | kf-alignment（产出 PRD 后 Hook 触发对齐） | 用户手动 | flash |
+| `kf-prd-generator` | `/prd-generator` | 快 | **自动调用** | kf-alignment（产出 PRD 后 Hook 触发对齐） | 用户手动、**kf-multi-team-compete Pre-Stage 自动调用** | flash |
 | `kf-triple-collaboration` | triple | 夯 | 内部 spawn | 同 kf-multi-team-compete（轻量版） | 用户手动 | pro+flash |
 | `kf-ui-prototype-generator` | — | 快 | 独立（被动技能） | 无 | kf-multi-team-compete Stage 2/5 自动调用 | flash |
 | `kf-skill-design-expert` | — | 稳 | 独立 | 无 | 用户手动 | pro |
@@ -287,6 +287,9 @@ git log --oneline -3
 用户: /夯 [任务]
   │
   ├─ kf-model-router 自动切换 → 裁判用 pro
+  │
+  ├─ Pre-Stage（条件触发：输入含 SDD Excel .xlsx 时）
+  │     └─ kf-prd-generator 读取 SDD Excel → 生成 PRD.md
   │
   ├─ Phase 1: 任务拆解
   │     └─ kf-alignment（对齐任务理解）
@@ -318,6 +321,7 @@ git log --oneline -3
 | kf-browser-ops 是否可被自动调用？ | **是。** kf-multi-team-compete Stage 3 自动调用做 UI 测试 |
 | kf-alignment 是否可被自动调用？ | **是。** kf-spec、kf-multi-team-compete、kf-prd-generator 均自动调用 |
 | gspowers Pipeline 与 `/夯` 的关系？ | Pipeline 引擎被融入 `/夯` 作为团队内部流水线编排引擎 |
+| kf-prd-generator 是否可被自动调用？ | **是。** `/夯` 输入 SDD Excel 时 Pre-Stage 自动调用生成 PRD.md |
 | `/夯` 是谁的别名？ | `kf-multi-team-compete` 的中文别称，主入口技能 |
 | gstack/gspowers 是否调用 kf- 系列？ | **否。** 上游技能与 kf- 系列隔离，但 Pipeline 引擎被 `/夯` 集成 |
 
