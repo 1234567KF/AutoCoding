@@ -25,6 +25,14 @@
 
 ---
 
+## 系统架构
+
+<p align="center">
+  <img src="assets/posters/架构图.png" alt="AI编程智驾 系统架构图" width="900">
+</p>
+
+---
+
 ## 分享给朋友（一键复制）
 
 **把下面这段话复制发给朋友，他丢给任意 AI（Claude Code / ChatGPT / Trae / Cursor）即可自动完成全部安装配置：**

@@ -251,6 +251,11 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 | 用户口述 1-2 句，关键维度缺失 | 中（YELLOW） | 仅对缺失维度做选择题 |
 | 一句话需求 / 模糊描述 | 高（RED） | 对 4 个关键维度逐一给选项 |
 
+**GREEN 级也必须输出锁定版任务规格**：
+- 即使报告/Spec 已足够详尽，Phase 1.3 的任务规格输出不可跳过
+- 原因：任务规格是三队 agent 共享的「假设基线」载体，缺少它则三队方案不可比
+- 实践：GREEN 级可简化（直接引用 Spec/报告中的关键约束），但必须显式输出 7 项结构
+
 **YELLOW/RED 级别的反转规则**（遵循 kf-alignment interactive 模式）：
 
 对每个有歧义的维度，给出 2-4 个具体选项，附带后果说明，禁止开放提问：
@@ -316,13 +321,18 @@ C. [方案名] — [一行说明]，后果：[选 C 的后果]
 
 ### Phase 2 — Swarm + Pipeline 并发执行
 
+**桥接层**：本 Skill 使用 Claude Code 内置 Agent 工具执行（非 ruflo swarm MCP）。通过 `hammer-bridge.cjs` 追踪 Agent 状态，弥补 ruflo 面板始终显示 0/15 的体验缺口。
+
 **三队流水线并行启动，每个 agent 按需自动分配模型**：
 
 ```
 0. 若 Pre-Stage 已产出 PRD.md，将 PRD.md 路径注入三队的 Stage 0 prompt 中作为输入
+0.5. node .claude/helpers/hammer-bridge.cjs init --task "<任务名>" --total-agents <N>
 1. swarm_init → hierarchical-mesh
 2. 为每队创建 Pipeline DAG: Stage0→Stage1→Stage2→Stage3→Stage4→Stage5
 3. 并行 spawn 三队的 Stage 0 agent（run_in_background: true, model: "sonnet"）
+   每个 agent spawn 后 MUST 调用:
+     node .claude/helpers/hammer-bridge.cjs agent-spawn --team <红/蓝/绿> --agent <agent名> --task-id <阶段>
    每个 agent 的 prompt 中 MUST 包含：
      - 若 PRD.md 存在：@PRD.md 文件引用
      - 若 Spec 存在：@spec.md 文件引用
@@ -336,8 +346,14 @@ C. [方案名] — [一行说明]，后果：[选 C 的后果]
      - 前端设计师 agent → model: "sonnet"（flash, 执行层面）
      - 协调者（本 Skill 自身）→ model: "opus"（pro, 规划+评判层面）
 4. Pipeline 自动推进：每阶段完成后自动触发下一阶段
+   每阶段完成时调用:
+     node .claude/helpers/hammer-bridge.cjs agent-done --team <队名> --agent <agent名> --output <产物文件>
 5. 等待三队全部流水线完成
+   执行中可随时查看状态:
+     node .claude/helpers/hammer-bridge.cjs status
 6. 收集各队 Stage 5 最终方案
+   生成最终摘要:
+     node .claude/helpers/hammer-bridge.cjs summary --task "<任务名>"
 ```
 
 **每个团队的最终方案必须包含**：
@@ -461,6 +477,8 @@ C. [方案名] — [一行说明]，后果：[选 C 的后果]
 ## Gotchas
 
 - 输入为 SDD Excel（`.xlsx`）时，**必须先执行 Pre-Stage** 调用 `kf-prd-generator` 生成 PRD.md，链路：`SDD Excel → PRD.md → kf-spec → Spec → 夯并发`
+- **GREEN 级别也不能跳过 Phase 1.3 任务规格输出**——即使报告/Spec 已详尽，锁定版规格（任务目标、约束、假设基线、评判维度）是三队可比的前提，缺失则三队方案不可比
+- ruflo swarm 面板始终显示 0/15 是正常的——本 Skill 使用 Claude Code 内置 Agent 工具执行，通过 `hammer-bridge.cjs` 追踪状态。运行 `node .claude/helpers/hammer-bridge.cjs status` 查看实际进度
 - 流水线阶段失败只阻塞该团队，不影响其他团队并行推进
 - Stage 2 编码阶段前端设计师可与全栈开发并行（UI 实现 + 后端实现独立）
 - 裁判评分前必须调用 `kf-alignment` 统一评分尺度，避免三队方案评分标准不一致
