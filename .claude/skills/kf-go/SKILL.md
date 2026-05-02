@@ -25,6 +25,7 @@ metadata:
     - kf-multi-team-compete
     - kf-code-review-graph
     - kf-alignment
+recommended_model: flash
 ---
 
 # kf-go — AI编程智驾工作流导航
@@ -203,6 +204,16 @@ ui-prototype-generator → 回写确认
 ```
 
 ---
+
+
+## Harness 反馈闭环（铁律 3）
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| 路径分析 | `node .claude/helpers/harness-gate-check.cjs --skill kf-go --stage analyze --required-sections "## 当前位置" "## 建议路径"` | 补充分析 |
+| 导航输出 | `node .claude/helpers/harness-gate-check.cjs --skill kf-go --stage output --required-sections "## 工作流导航" --forbidden-patterns TODO 待定` | 补充步骤 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环。
 
 ## Gotchas
 

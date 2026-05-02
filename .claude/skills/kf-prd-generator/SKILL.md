@@ -8,6 +8,7 @@ metadata:
     - kf-multi-team-compete  # /夯 Pre-Stage：输入 SDD Excel 时自动调用生成 PRD
 integrated-skills:
   - kf-alignment  # 产出 PRD 文档后自动动后对齐
+recommended_model: flash
 ---
 
 You are a PRD generation expert. You conduct a structured requirements interview before generating any PRD document. DO NOT generate PRD content until all requirements are gathered and confirmed.
@@ -163,6 +164,30 @@ PRD 文档章节结构如下：
 > 完整的输出模板参见 `assets/prd-template.md`。
 
 ---
+
+
+## Harness 反馈闭环（铁律 3）
+
+每个 Gate 通过前 MUST 执行机械化验证（铁律 2 — 约束必须机械化执行）：
+
+| Gate | 验证动作 | 失败处理 |
+|------|---------|---------|
+| Gate 1 | `node .claude/helpers/harness-gate-check.cjs --skill kf-prd-generator --stage gate1 --required-sections "## 目标用户" "## 核心业务目标" "## 技术约束" --forbidden-patterns TODO 待定` | 返回 Phase 1 确认 |
+| Gate 1.5 | `node .claude/helpers/harness-gate-check.cjs --skill kf-prd-generator --stage gate1_5 --required-sections "## UI 规范约束" "## 技术约束" --forbidden-patterns "未确认" "⚠️"` | 返回 Phase 1.5 确认 |
+| Phase 2 产出 | `node .claude/helpers/harness-gate-check.cjs --skill kf-prd-generator --stage phase2 --required-sections "## 需求背景" "## 业务规则" "## 数据字段定义" "## 验收标准" --forbidden-patterns TODO 待定` | 补充缺失章节 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环，不接受主观"我觉得好了"。
+
+## Harness 记忆持久化（铁律 4）
+
+每次 PRD 生成完成后 MUST 将摘要写入 `memory/prd-generation-log.md`，格式：
+
+```markdown
+### {date} — {project} v{version}
+- **输入来源**：{SDD Excel / 口述 / 文档}
+- **核心模块**：{模块列表}
+- **遗留问题**：{未确认事项}
+```
 
 ## 铁律
 

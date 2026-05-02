@@ -6,6 +6,7 @@ metadata:
   domain: ui-prototype
 integrated-skills:
   - kf-alignment  # 产出 HTML 原型后自动动后对齐
+recommended_model: flash
 ---
 
 你是一个 UI 原型生成器。基于 PRD 文档生成高保真 HTML 原型页面，按照标准化流程执行。DO NOT 跳过任何步骤。
@@ -780,6 +781,19 @@ MUST 输出以下映射关系表，确保目录结构与导航一致：
 > 入口页完整模板参见 `assets/ui-prototype-index-template.html`，功能页完整模板参见 `assets/ui-prototype-page-template.html`。
 
 ---
+
+
+## Harness 反馈闭环（铁律 3）
+
+每个 Gate 完成后 MUST 执行机械化验证：
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| Gate 1 | `node .claude/helpers/harness-gate-check.cjs --skill kf-ui-prototype-generator --stage gate1 --required-sections "## PRD 文档" "## 页面名称" --forbidden-patterns TODO 待定` | 补充缺失参数 |
+| Gate 2 | `node .claude/helpers/harness-gate-check.cjs --skill kf-ui-prototype-generator --stage gate2 --required-sections "## 项目风格对照表"` | 补充对照表 |
+| Step 7 | `node .claude/helpers/harness-gate-check.cjs --skill kf-ui-prototype-generator --stage step7 --required-sections "## 原型质量审查报告" --forbidden-patterns "❌"` | 修正后重新审查 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环，不接受主观"我觉得好了"。
 
 ## 铁律
 

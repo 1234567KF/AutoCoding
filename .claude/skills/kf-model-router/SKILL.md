@@ -153,6 +153,17 @@ Agent({
 - `kf-prd-generator`：产出 PRD 后自动切回 flash
 - 其他所有声明 `recommended_model` 的技能
 
+## Harness 反馈闭环（铁律 3）
+
+每次模型切换后 MUST 执行验证：
+
+| 触发点 | 验证动作 | 失败处理 |
+|--------|---------|---------|
+| 模型切换 | `node .claude/helpers/harness-gate-check.cjs --skill kf-model-router --stage routing --required-sections "触发技能" "切换方向" "切换原因" --forbidden-patterns "未确认" "待定"` | 补充路由决策记录 |
+| 周汇总 | `node .claude/helpers/harness-gate-check.cjs --skill kf-model-router --stage weekly --required-files "memory/model-routing-stats.md" --min-lines "memory/model-routing-stats.md" 20` | 补充缺失统计 |
+
+路由原则：**计划用 pro（20%），执行用 flash（70%），轻量任务用轻量模型（10%）**。
+
 ## Harness 反馈统计（铁律 3）
 
 每次模型切换后 MUST 记录路由决策到 `memory/model-routing-stats.md`：

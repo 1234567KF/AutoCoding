@@ -17,6 +17,7 @@ allowed-tools:
   - SearchCodebase
 integrated-skills:
   - kf-alignment  # 产出审查报告后自动动后对齐
+recommended_model: flash
 ---
 
 # 代码审查依赖图谱
@@ -133,6 +134,16 @@ git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only HEAD
 ```
 
 ---
+
+
+## Harness 反馈闭环（铁律 3）
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| 依赖图谱生成 | `node .claude/helpers/harness-gate-check.cjs --skill kf-code-review-graph --stage graph --required-files "*-dependency-graph.md" --forbidden-patterns TODO 待定` | 重新生成 |
+| 审查报告生成 | `node .claude/helpers/harness-gate-check.cjs --skill kf-code-review-graph --stage review --required-sections "## 变更影响范围" "## 审查优先级" --forbidden-patterns TODO 待定` | 补充章节 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环，不接受主观"我觉得好了"。
 
 ## 输出要求
 

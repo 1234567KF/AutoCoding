@@ -25,6 +25,7 @@ metadata:
   called_by:
     - kf-multi-team-compete  # Stage 2 UI 原型配图 / Stage 5 方案配图
 integrated-skills: []
+recommended_model: flash
 ---
 
 # AI 自然语言图片编辑
@@ -153,6 +154,16 @@ edit_last("进一步修改的描述")
 ## 输出规范
 
 ```markdown
+
+## Harness 反馈闭环（铁律 3）
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| MCP 连通检查 | `node .claude/helpers/harness-gate-check.cjs --skill kf-image-editor --stage connect --required-sections "## Nano Banana MCP Status" --forbidden-patterns "offline"` | 自动修复 MCP 连接 |
+| 编辑结果验证 | `node .claude/helpers/harness-gate-check.cjs --skill kf-image-editor --stage result --required-files "edited-*.png" --forbidden-patterns "error"` | 重新编辑 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环。
+
 ## 图片编辑报告
 
 ### 操作摘要

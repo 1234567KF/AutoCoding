@@ -19,6 +19,7 @@ allowed-tools:
 metadata:
   called_by:
     - kf-multi-team-compete  # Stage 3 自动调用做 UI 测试
+recommended_model: flash
 ---
 
 # 浏览器自动化操作
@@ -197,6 +198,16 @@ const { chromium } = require('playwright');
 每次操作完成后输出：
 
 ```markdown
+
+## Harness 反馈闭环（铁律 3）
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| 测试执行 | `node .claude/helpers/harness-gate-check.cjs --skill kf-browser-ops --stage test --required-files "test-results.json" --forbidden-patterns "FAIL"` | 修复后重测 |
+| 报告生成 | `node .claude/helpers/harness-gate-check.cjs --skill kf-browser-ops --stage report --required-sections "## 测试结果" "## 失败用例" "## 截图"` | 补充报告 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环。
+
 ## 浏览器操作报告
 
 ### 执行摘要

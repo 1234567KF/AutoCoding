@@ -9,6 +9,7 @@ description: >-
 metadata:
   pattern: inversion + tool-wrapper
   domain: skill-design
+recommended_model: pro
 ---
 
 # 角色定义
@@ -338,6 +339,19 @@ Report results. Fix issues before presenting the final document.
 - [ ] 每条指令是否都能回答「Agent 没有这条会做错吗？」（删除通用常识）
 - [ ] 是否包含 Gotchas 章节记录项目/环境特有陷阱？（如适用）
 
+
+## Harness 反馈闭环（铁律 3）
+
+每个 Step 完成后 MUST 执行验证：
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| Step 1 需求诊断 | `node .claude/helpers/harness-gate-check.cjs --skill kf-skill-design-expert --stage step1 --required-sections "## 核心问题" "## 推荐模式"` | 补充诊断 |
+| Step 3 Skill 设计 | `node .claude/helpers/harness-gate-check.cjs --skill kf-skill-design-expert --stage step3 --required-sections "## frontmatter" "## instructions" --forbidden-patterns TODO 待定` | 回退补充 |
+| Step 4 质量自检 | `node .claude/helpers/harness-gate-check.cjs --skill kf-skill-design-expert --stage step4 --required-files "SKILL.md" --forbidden-patterns "❌"` | 修正缺陷 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环，不接受主观"我觉得好了"。
+
 ## 第五步：交付与迭代
 
 将完成的 Skill 文件写入指定目录，并给出使用建议。
@@ -364,3 +378,42 @@ Report results. Fix issues before presenting the final document.
 - 不得忽略阶段门控设计（对于 Inversion/Pipeline 模式）
 - 不得生成缺少约束条件的 Reviewer 类 Skill
 - 不得在 frontmatter 顶层使用非标准字段（如 `tools`、`required_rules`），自定义字段必须放入 `metadata` 中
+
+---
+
+## Harness Engineering 评审体系
+
+本 Skill 提供完整的 Harness Engineering 五根铁律评审方法论：
+
+| 资源 | 路径 | 用途 |
+|------|------|------|
+| **评审体系文档** | `references/harness-engineering-audit.md` | 五根铁律详细评分标准、评审流程、报告模板 |
+| **自动化审计脚本** | `../../helpers/harness-audit.cjs` | 全路径扫描 kf- 技能，自动生成评分矩阵 + 系统性缺陷分析 |
+| **门控验证脚本** | `../../helpers/harness-gate-check.cjs` | 机械化门控验证（required-files / required-sections / forbidden-patterns） |
+
+### 触发方式
+
+```
+# 全量审计
+node .claude/helpers/harness-audit.cjs --all
+
+# 单技能审计
+node .claude/helpers/harness-audit.cjs --skill kf-multi-team-compete
+
+# 详细诊断
+node .claude/helpers/harness-audit.cjs --all --verbose
+
+# JSON 输出（供 CI 消费）
+node .claude/helpers/harness-audit.cjs --all --format json
+```
+
+### 评审流程
+
+1. 用户说"Harness 评审" / "五根铁律审计" / "audit" 时
+2. 运行 `node .claude/helpers/harness-audit.cjs --all --verbose`
+3. 按报告中的系统性缺陷优先级逐项修复
+4. 修复后重新审计验证
+
+### 历史跟踪
+
+审计结果自动归档到 `memory/harness-audit-history.md`，每次审计输出趋势对比。

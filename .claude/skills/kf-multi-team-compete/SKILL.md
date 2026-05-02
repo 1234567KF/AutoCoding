@@ -401,8 +401,24 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 - 裁判评分前必须调用 `kf-alignment` 统一评分尺度，避免三队方案评分标准不一致
 - 回退模式（无 MCP）下流水线改为单会话顺序模拟，每阶段输出后等待确认
 - 快速模式跳过流水线和 swarm，仅做双视角文本对比，不生成中间产物
-- **Harness 门控**：每个 Stage 完成后 MUST 运行 `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage <N> --required-files <产出文件> --forbidden-patterns TODO 待定`，门控失败则阻断该团队流水线
-- **记忆持久化**：Phase 4 汇总融合完成后 MUST 将最终评分卡和方案摘要写入 `memory/hammer-results.md`，下次 `/夯` 启动时自动加载历史结果作为参考基线
+
+## Harness 反馈闭环（铁律 3）
+
+每个 Phase 完成后 MUST 执行机械化验证：
+
+| Phase | 验证动作 | 失败处理 |
+|-------|---------|---------|
+| Pre-Stage（条件触发） | `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage prestage --required-files "PRD.md" --forbidden-patterns TODO 待定` | PRD.md 缺失则阻断进入 Phase 1 |
+| Phase 1 | `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage phase1 --required-sections "## 任务目标" "## 评判维度及权重" --forbidden-patterns TODO 待定` | 任务规格不完整则回退 |
+| Phase 2（每队） | `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage <N> --team <红/蓝/绿> --required-files "{team}-0<N>-*.md" --forbidden-patterns TODO 待定` | 阶段产物缺失则阻断该团队流水线 |
+| Phase 3 | `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage phase3 --required-sections "## 裁判评分卡" "## 排名" --forbidden-patterns TODO 待定` | 评分卡不完整则回退 |
+| Phase 4 | `node .claude/helpers/harness-gate-check.cjs --skill kf-multi-team-compete --stage phase4 --required-sections "## 最终方案" "## 融合策略" "## 碾压指标" --forbidden-patterns TODO 待定` | 汇总不完整则回退融合 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环，不接受主观"我觉得好了"。
+
+## Harness 记忆持久化（铁律 4）
+
+Phase 4 汇总融合完成后 MUST 将最终评分卡和方案摘要写入 `memory/hammer-results.md`，下次 `/夯` 启动时自动加载历史结果作为参考基线。
 
 ---
 

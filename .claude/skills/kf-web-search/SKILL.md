@@ -21,6 +21,7 @@ metadata:
   called_by:
     - kf-multi-team-compete  # agent 按需自动调用
     - kf-spec               # 资料收集阶段
+recommended_model: flash
 ---
 
 # 多引擎智能搜索
@@ -147,6 +148,16 @@ intitle:"{技术名}" filetype:md OR filetype:pdf
 ```
 
 ---
+
+
+## Harness 反馈闭环（铁律 3）
+
+| Step | 验证动作 | 失败处理 |
+|------|---------|---------|
+| 搜索执行 | `node .claude/helpers/harness-gate-check.cjs --skill kf-web-search --stage search --required-sections "## 搜索结果" --forbidden-patterns "无结果"` | 换关键词重搜 |
+| 结果汇总 | `node .claude/helpers/harness-gate-check.cjs --skill kf-web-search --stage summary --required-sections "## 关键发现" "## 参考来源" --forbidden-patterns TODO 待定` | 补充来源链接 |
+
+验证原则：**Plan → Build → Verify → Fix** 强制循环。
 
 ## 高级搜索技巧
 

@@ -21,7 +21,8 @@
 | `kf-prd-generator` | `/prd-generator` | 快 | 自动调用 kf-alignment（产出后 Hook 对齐）；被 `/夯` Pre-Stage 自动调用 | SDD Excel → PRD 生成器 |
 | `kf-triple-collaboration` | triple | 夯 | 内部 spawn（轻量版 `/夯`） | 三方协作评审 |
 | `kf-ui-prototype-generator` | — | 快 | 被 `/夯` Stage 2/5 自动调用 | UI 原型 HTML 生成 |
-| `kf-skill-design-expert` | — | 稳 | 独立 | Skill 设计专家 |
+| `kf-image-editor` | — | 快 | 被 `/夯` Stage 2/5 自动调用 | AI 自然语言 P 图，Nano Banana MCP |
+| `kf-skill-design-expert` | — | 稳 | 独立，包含 Harness Engineering 评审体系 | Skill 设计专家 + 五根铁律审计 |
 | `kf-markdown-to-docx-skill` | — | — | 独立 | Markdown → DOCX 转换 |
 
 ### 上游技能（非自建，不加 kf- 前缀）
@@ -40,7 +41,9 @@
 ├── settings.local.json        # 本地覆盖配置
 ├── install-local.ps1          # Windows 安装脚本
 ├── install-local.sh           # Linux/macOS 安装脚本
-├── helpers/                   # Hook 处理器
+├── helpers/                   # Hook 处理器 + 审计脚本
+│   ├── harness-gate-check.cjs # 机械化门控验证
+│   └── harness-audit.cjs      # 五根铁律全路径审计
 ├── agents/                   # Agent 定义
 ├── commands/                 # 自定义命令
 └── skills/                   # 技能
@@ -85,6 +88,7 @@ claude
 | `/prd-generator` | kf-prd-generator | 快 | 自动调用 kf-alignment |
 | `triple [任务]` | kf-triple-collaboration | 夯 | 轻量版 `/夯` |
 | `模型路由` / `省模式` | kf-model-router | 省 | **全自动**，用户无感 |
+| `Harness 评审` / `五根铁律审计` | kf-skill-design-expert | 稳 | 全路径扫描，评分矩阵 + 缺陷分级 |
 
 ## 自动调用链速览
 
@@ -125,3 +129,12 @@ claude
 - [AICoding.md](AICoding.md) — 单文件入口（给 AI 看）
 - [INSTALL.md](docs/INSTALL.md) — AI 安装指南
 - [MANUAL.md](docs/MANUAL.md) — 用户使用手册
+- [memory/MEMORY.md](memory/MEMORY.md) — 跨会话记忆索引
+- [memory/harness-audit-history.md](memory/harness-audit-history.md) — Harness 评审历史
+
+## Harness Engineering 评审
+
+```bash
+# 全路径五根铁律审计
+node .claude/helpers/harness-audit.cjs --all --verbose
+```
