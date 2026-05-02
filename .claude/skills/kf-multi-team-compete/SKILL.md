@@ -25,7 +25,7 @@ integrated-skills:
   - kf-triple-collaboration   # 参考其并行 Agent 启动模式
   - kf-code-review-graph      # 审查 agent 调用
   - kf-alignment              # 裁判融合时对齐
-  - kf-spec-coding            # 编码任务时引用 Spec
+  - kf-spec            # 编码任务时引用 Spec
 ---
 
 # 夯 — 多团队竞争评审系统
@@ -104,7 +104,7 @@ integrated-skills:
 | 角色 | 职责 | 联动 Skill |
 |------|------|-----------|
 | **前端设计师** | 精准复刻 PRD/SPEC 的 UI 实现 | `kf-ui-prototype-generator` |
-| **全栈开发** | 前后端联调自测，全链路实现 | `kf-spec-coding`（读取 Spec） |
+| **全栈开发** | 前后端联调自测，全链路实现 | `kf-spec`（读取 Spec） |
 | **集成测试** | 编写并运行测试用例，验证验收标准 | `kf-browser-ops`（自动化测试） |
 
 ---
@@ -287,7 +287,7 @@ integrated-skills:
 | `kf-triple-collaboration` | **参考**并行 Agent 启动模式 | Phase 2 swarm 初始化 |
 | `kf-code-review-graph` | **调用**代码审查图谱分析 | 编码任务中集成测试 agent 执行 |
 | `kf-alignment` | **调用**对齐评分标准和融合决策 | Phase 3 裁判评分 + Phase 4 汇总融合 |
-| `kf-spec-coding` | **读取**Spec 文档作为统一规格 | 有 Spec 时全栈开发 agent 获取上下文 |
+| `kf-spec` | **读取**Spec 文档作为统一规格 | 有 Spec 时全栈开发 agent 获取上下文 |
 | `kf-browser-ops` | **调用**自动化测试 | 集成测试 agent 执行 UI 测试 |
 | `ruflo swarm` | **依赖**多 Agent 并发基础设施 | Phase 2 真实并发模式 |
 

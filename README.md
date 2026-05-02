@@ -18,7 +18,7 @@
 | **准** | 避免通用大模型哄骗 | kf-web-search |
 | **测的准** | 浏览器自动化测试 | kf-browser-ops |
 | **夯** | 多 Agent 并发竞争碾压 | kf-multi-team-compete、kf-triple-collaboration |
-| **快** | MVP 快速验证，能 Mock 就 Mock | kf-spec-coding、kf-prd-generator |
+| **快** | MVP 快速验证，能 Mock 就 Mock | kf-spec、kf-prd-generator |
 | **懂** | 动前对齐，动后 diff | kf-alignment |
 
 ---
@@ -96,7 +96,7 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 | `安全审计` | 多 Agent 安全扫描 | ruflo |
 | `triple [任务]` | 通用三方协作 | kf-triple-collaboration |
 | `TDD` | 启用测试先行模式 | 扩展 |
-| `spec coding` / `写spec文档` | Spec 驱动开发 | kf-spec-coding |
+| `spec coding` / `写spec文档` | Spec 驱动开发 | kf-spec |
 | `/review-graph` | 代码审查依赖图谱 | kf-code-review-graph |
 | `/web-search [问题]` | 多引擎智能搜索 | kf-web-search |
 | `/browser-ops` | 浏览器自动化操作 | kf-browser-ops |
@@ -138,7 +138,7 @@ AI编程智驾/
 │   ├── agents/            # Agent 定义
 │   ├── commands/          # 自定义命令
 │   └── skills/            # 技能（kf- 系列 + 上游）
-│       ├── kf-spec-coding/         # Spec 驱动开发
+│       ├── kf-spec/         # Spec 驱动开发
 │       ├── kf-code-review-graph/   # 代码审查图谱
 │       ├── kf-web-search/          # 多引擎搜索
 │       ├── kf-browser-ops/         # 浏览器自动化

@@ -88,6 +88,6 @@ metadata:
 ## 集成
 
 本 Skill 与以下 Skill 配合使用：
-- `kf-spec-coding`：Step 1 澄清阶段本质就是对齐
+- `kf-spec`：Step 1 澄清阶段本质就是对齐
 - `kf-multi-team-compete`：裁判和汇总师的评分融合
 - `kf-code-review-graph`：审查前后对齐改动范围

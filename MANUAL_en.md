@@ -11,7 +11,7 @@
 
 ### One-Line Positioning
 
-**AutoCoding** — Let AI autonomously drive the entire programming process, from environment setup to code delivery, with zero manual intervention.
+**AutoCoding** — Let AI autonomously drive the entire programming process, from environment setup to code delivery, with zero manual intervention. You don't even need programming experience — just understand the general process, what each phase produces, and what the goals are.
 
 ### Core Features
 
@@ -117,43 +117,9 @@ Pipeline automatically:
 ...and so on
 ```
 
-### Quick Triggers
-
-| Trigger | Function |
-|---------|----------|
-| `/gspowers` | Start SOP process navigation |
-| `/pipeline-dev` | Multi-module assembly line development |
-| `安全审计` (Security Audit) | Multi-agent security scan |
-| `triple [task]` | Universal triple collaboration |
-| `TDD` | Enable test-first mode |
-| `允许 AI 自动扩充技能` (Allow AI to expand skills) | Authorize AI to extend functionality |
-
 ---
 
-## 二、Core Principle: Self-Healing Control
-
-When AI executes tasks and encounters missing tools, page changes, or exceptions, **do not interrupt**, instead:
-
-```
-1. Missing tool → AI directly writes/edits tool scripts to continue running
-2. Page changed → AI re-runs snapshot -i to recognize new elements
-3. Popup/exception → AI automatically dialog-accept/handle
-4. Failure doesn't interrupt → Analyze reason, fix and continue
-```
-
-**Traditional Automation** vs **Self-Healing Control**:
-
-| Traditional Automation | Self-Healing Control |
-|----------------------|---------------------|
-| Crashes when page changes | AI dynamically adapts, continues running |
-| High maintenance cost | AI autonomously fixes without human intervention |
-| Frequent human intervention | Agent autonomously makes decisions |
-
-**Key Change**: From "command-driven" to "goal-driven". AI remembers the goal, resolves obstacles independently, doesn't wait for human input.
-
----
-
-## 三、Project Development Workflow
+## 二、Project Development Workflow
 
 > Complete flow from requirements to code delivery
 
@@ -175,7 +141,7 @@ After preparation, choose a development path based on project needs:
 #### Path 1 — kf Series (Fast + Hammer, recommended for MVP)
 
 ```
-6. /kf-spec-coding → Select MVP mode, generate Spec document
+6. /kf-spec → Select MVP mode, generate Spec document
 7. /kf-multi-team-compete (/夯) → Red/Blue/Green teams compete concurrently,
    producing merged optimal code (built-in integration test agent automatically
    invokes kf-code-review-graph for code review)
@@ -212,7 +178,7 @@ claude
 
 ---
 
-## 四、Feature Triggers Quick Reference
+## 三、Feature Triggers Quick Reference
 
 | Trigger | Function | Source |
 |---------|----------|--------|
@@ -231,14 +197,14 @@ claude
 | `/夯 [task]` | Multi-team competition review | kf-multi-team-compete |
 | `/对齐` / `Explain your understanding` | Alignment workflow | kf-alignment |
 | `模型路由` / `Save mode` | Smart model routing | kf-model-router |
-| `spec coding` | Spec-driven development | kf-spec-coding |
+| `spec coding` | Spec-driven development | kf-spec |
 | `/prd-generator` | PRD document generation | kf-prd-generator |
 
 ---
 
-## 五、Memory Sharing Explanation
+## 四、Memory Sharing Explanation
 
-### 5.1 Memory Hierarchy
+### 4.1 Memory Hierarchy
 
 ```
 Global Memory (~/.claude-flow/data/)
@@ -248,13 +214,13 @@ Project-Level Memory (.claude-flow/data/)
 Agent Sharing (agents within the same project share memory)
 ```
 
-### 5.2 Agent Memory Sharing Within Same Project
+### 4.2 Agent Memory Sharing Within Same Project
 
 When `agentScopes.defaultScope: project`, all agents started in the same project share that project's memory context. Memory is isolated between different projects, avoiding bloated global memory.
 
 ---
 
-## 六、Directory Structure
+## 五、Directory Structure
 
 ```
 ~$USERPROFILE/
@@ -272,7 +238,7 @@ Project Local (AutoCoding/):
 │   ├── CLAUDE.md              # Project instructions
 │   ├── settings.json          # Project configuration
 │   └── skills/                # Project-local skills
-│       ├── kf-spec-coding/    # Spec-driven development
+│       ├── kf-spec/    # Spec-driven development
 │       ├── kf-code-review-graph/ # Code review dependency graph
 │       ├── kf-web-search/     # Multi-engine search
 │       ├── kf-browser-ops/    # Browser automation
@@ -289,7 +255,7 @@ Project Local (AutoCoding/):
 
 ---
 
-## 七、Quick Reference
+## 六、Quick Reference
 
 ```powershell
 # Post-installation verification
@@ -314,7 +280,7 @@ claude
 
 ---
 
-## 八、Version Compatibility
+## 七、Version Compatibility
 
 | Tool | Recommended Version | Compatibility Notes |
 |------|---------------------|--------------------|
@@ -328,7 +294,7 @@ claude
 
 ---
 
-## 九、Troubleshooting
+## 八、Troubleshooting
 
 ### Issue: A tool cannot be detected
 
@@ -360,9 +326,9 @@ Get-ChildItem "$env:USERPROFILE\.claude\skills" -Directory
 
 ---
 
-## 十、TDD Test-First Mode
+## 九、TDD Test-First Mode
 
-### 10.1 What is TDD
+### 9.1 What is TDD
 
 TDD (Test-Driven Development) test-first development:
 
@@ -374,7 +340,7 @@ RED → GREEN → REFACTOR
 3. Refactor and optimize (REFACTOR) - Optimize code while ensuring tests still pass
 ```
 
-### 10.2 TDD Triggers
+### 9.2 TDD Triggers
 
 | Trigger | AI Behavior |
 |---------|-------------|
@@ -383,7 +349,7 @@ RED → GREEN → REFACTOR
 | `测试先行` (Test First) | Same |
 | `关闭 TDD` (Turn Off TDD) | Restore normal development mode |
 
-### 10.3 TDD Effect
+### 9.3 TDD Effect
 
 ```
 You: "Implement user registration feature, following TDD"
@@ -399,9 +365,9 @@ AI:
 
 ---
 
-## 十一、Pipeline Multi-Module Assembly Line
+## 十、Pipeline Multi-Module Assembly Line
 
-### 11.1 What is Pipeline Mode
+### 10.1 What is Pipeline Mode
 
 When a project contains **multiple modules with dependencies**, Pipeline mode automatically handles:
 
@@ -410,7 +376,7 @@ When a project contains **multiple modules with dependencies**, Pipeline mode au
 3. Gate verification between batches (only proceed if verified)
 4. Status tracking and breakpoint recovery
 
-### 11.2 Typical Scenario
+### 10.2 Typical Scenario
 
 ```
 Scenario: E-commerce system
@@ -426,7 +392,7 @@ Batch 3: Order Service → Gate verification passed
 Batch 4: Payment Service → Complete
 ```
 
-### 11.3 Trigger Methods
+### 10.3 Trigger Methods
 
 ```
 /pipeline-dev
@@ -436,19 +402,19 @@ Batch 4: Payment Service → Complete
 
 ---
 
-## 十二、AI Automated Skill Expansion
+## 十一、AI Automated Skill Expansion
 
-### 12.1 What is Skill Expansion
+### 11.1 What is Skill Expansion
 
 When the user authorizes "Allow AI to automatically expand skills", AI can automatically extend functionality.
 
-### 12.2 Trigger Condition
+### 11.2 Trigger Condition
 
 ```
 User says "允许 AI 自动扩充技能" (Allow AI to automatically expand skills) or similar expression
 ```
 
-### 12.3 Expanded Functions
+### 11.3 Expanded Functions
 
 | Trigger | AI Action |
 |---------|-----------|
@@ -459,7 +425,7 @@ User says "允许 AI 自动扩充技能" (Allow AI to automatically expand skill
 
 ---
 
-## 十三、Security Level Description
+## 十二、Security Level Description
 
 | Level | Applicable Scenario | Risk Level | Description |
 |-------|---------------------|------------|-------------|
@@ -470,7 +436,7 @@ User says "允许 AI 自动扩充技能" (Allow AI to automatically expand skill
 
 ---
 
-## 十四、Document Index
+## 十三、Document Index
 
 | Document | Description |
 |----------|-------------|

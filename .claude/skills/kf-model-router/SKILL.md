@@ -63,6 +63,6 @@ metadata:
 ## 集成
 
 本 Skill 与以下 Skill 配合使用：
-- `kf-spec-coding`：Step 0 时确认模型选择
+- `kf-spec`：Step 0 时确认模型选择
 - `kf-code-review-graph`：审查阶段自动切换 Sonnet
 - `kf-multi-team-compete`：裁判/汇总师用 Opus，开发 agent 用 Sonnet

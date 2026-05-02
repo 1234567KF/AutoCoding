@@ -10,7 +10,7 @@
 
 | 技能 | 原则 | 说明 |
 |------|------|------|
-| `kf-spec-coding` | 快 | Spec 驱动开发：需求 → Spec → 分步实施 |
+| `kf-spec` | 快 | Spec 驱动开发：需求 → Spec → 分步实施 |
 | `kf-code-review-graph` | 省 | 代码审查依赖图谱，轻装上阵快速提取 |
 | `kf-web-search` | 准 | 多引擎智能搜索，避免通用大模型哄骗 |
 | `kf-browser-ops` | 测的准 | 浏览器自动化测试，Playwright 复现 bug |
@@ -43,7 +43,7 @@
 ├── agents/                   # Agent 定义
 ├── commands/                 # 自定义命令
 └── skills/                   # 技能
-    ├── kf-spec-coding/        # Spec 驱动开发
+    ├── kf-spec/        # Spec 驱动开发
     ├── kf-code-review-graph/  # 代码审查图谱
     ├── kf-web-search/         # 多引擎搜索
     ├── kf-browser-ops/        # 浏览器自动化
@@ -73,7 +73,7 @@ claude
 
 | 触发词 | 技能 | 原则 |
 |--------|------|------|
-| `spec coding` / `写spec文档` | kf-spec-coding | 快 |
+| `spec coding` / `写spec文档` | kf-spec | 快 |
 | `/对齐` / `说下你的理解` | kf-alignment | 懂 |
 | `/review-graph` | kf-code-review-graph | 省 |
 | `/web-search [问题]` | kf-web-search | 准 |
