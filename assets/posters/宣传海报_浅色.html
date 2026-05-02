@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AICoding — AI编程智驾 (浅色版)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #f8fafc;
+    --bg-card: rgba(255,255,255,0.85);
+    --border-subtle: rgba(14,165,233,0.12);
+    --border-active: rgba(14,165,233,0.35);
+    --accent: #0ea5e9;
+    --accent-light: #38bdf8;
+    --accent-violet: #8b5cf6;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --gradient-brand: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+    --success: #22c55e;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --card-shadow-hover: 0 4px 12px rgba(14,165,233,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    cursor: crosshair;
+  }
+
+  canvas#particleCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.025;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .poster {
+    width: 1200px;
+    min-height: 800px;
+    padding: 60px 80px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .header {
+    text-align: center;
+    position: relative;
+  }
+
+  .header .badge {
+    display: inline-block;
+    padding: 5px 18px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 3px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    background: rgba(14,165,233,0.04);
+  }
+
+  .header h1 {
+    font-size: 72px;
+    font-weight: 800;
+    background: var(--gradient-brand);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease-in-out infinite;
+    line-height: 1.15;
+    letter-spacing: 4px;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 200% center; }
+  }
+
+  .header .subtitle {
+    color: var(--text-secondary);
+    font-size: 18px;
+    margin-top: 14px;
+    letter-spacing: 2px;
+    font-weight: 400;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), var(--border-active), var(--border-subtle), transparent);
+  }
+
+  .six-principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .principle-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+  }
+
+  .principle-card:hover {
+    border-color: var(--border-active);
+    transform: translateY(-3px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .principle-card .char {
+    font-size: 44px;
+    font-weight: 800;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  .principle-card .label {
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .principle-card .desc {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* ===== AI产出本质要素 层级图 ===== */
+  .quality-layers-section {
+    text-align: center;
+  }
+
+  .quality-layers-section .section-label {
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    display: inline-block;
+    padding: 6px 24px;
+    border-radius: 20px;
+    background: rgba(14,165,233,0.06);
+    border: 1px solid rgba(14,165,233,0.15);
+  }
+
+  .layers-stack {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 20px 12px;
+    border-radius: 14px;
+    background: rgba(14,165,233,0.02);
+    border: 1px solid rgba(14,165,233,0.08);
+  }
+
+  .layer-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .layer-block {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: 1px solid rgba(14,165,233,0.16);
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+  }
+
+  .layer-block:hover {
+    border-color: rgba(14,165,233,0.35);
+    box-shadow: 0 3px 12px rgba(14,165,233,0.08);
+    transform: translateY(-2px);
+  }
+
+  .layer-block .layer-name {
+    font-size: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 130px;
+    text-align: right;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .layer-block .layer-divider-v {
+    width: 1px;
+    height: 30px;
+    background: rgba(14,165,233,0.16);
+  }
+
+  .layer-block .layer-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .layer-block .layer-desc em {
+    font-style: normal;
+    color: var(--accent-violet);
+    font-weight: 600;
+  }
+
+  .layer-block.layer-model {
+    border-color: rgba(14,165,233,0.25);
+    border-left: 3px solid #0ea5e9;
+    background: rgba(14,165,233,0.04);
+  }
+  .layer-block.layer-agent {
+    border-color: rgba(56,189,248,0.22);
+    border-left: 3px solid #38bdf8;
+    background: rgba(56,189,248,0.03);
+  }
+  .layer-block.layer-skill {
+    border-color: rgba(139,92,246,0.20);
+    border-left: 3px solid #8b5cf6;
+    background: rgba(139,92,246,0.03);
+  }
+  .layer-block.layer-prompt {
+    border-color: rgba(14,165,233,0.28);
+    border-left: 3px solid #0284c7;
+    background: rgba(14,165,233,0.05);
+  }
+
+  .layer-compare {
+    width: 190px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1.6;
+    padding: 0 8px;
+  }
+
+  .layer-compare span {
+    display: block;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .layer-arrow-down {
+    text-align: center;
+    padding: 2px 0;
+    font-size: 14px;
+    color: rgba(14,165,233,0.20);
+    letter-spacing: 4px;
+  }
+
+  /* GIGO 警示条 */
+  .gigo-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(239,68,68,0.18);
+  }
+
+  .gigo-bar .gigo-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ef4444;
+    letter-spacing: 3px;
+    padding: 2px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(239,68,68,0.25);
+    background: rgba(239,68,68,0.08);
+  }
+
+  .gigo-bar .gigo-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .gigo-bar .gigo-arrow {
+    color: #ef4444;
+    font-size: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .layers-stack { padding: 12px 8px 8px; }
+    .layer-row { flex-direction: column; gap: 6px; }
+    .layer-compare { width: 100%; order: -1; padding: 6px 0; }
+    .layer-block { flex-direction: column; gap: 6px; padding: 12px 16px; }
+    .layer-block .layer-name { min-width: auto; text-align: center; }
+    .layer-block .layer-divider-v { display: none; }
+    .layer-block .layer-desc { text-align: center; }
+    .layer-block.layer-model,
+    .layer-block.layer-agent,
+    .layer-block.layer-skill,
+    .layer-block.layer-prompt { border-left: 1px solid; }
+    .gigo-bar { flex-direction: column; gap: 6px; }
+    .layer-arrow-down { font-size: 12px; }
+  }
+
+  .agents-section {
+    text-align: center;
+  }
+
+  .agents-section .section-label {
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  .hex-row {
+    display: flex;
+    gap: 0;
+  }
+
+  .hex-row.offset {
+    padding-left: 35px;
+  }
+
+  .hex-cell {
+    width: 62px;
+    height: 52px;
+    position: relative;
+    margin: 0 -1px;
+    margin-bottom: -10px;
+  }
+
+  .hex-cell .hex {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: rgba(14,165,233,0.06);
+    transition: all 0.4s ease;
+  }
+
+  .hex-cell .hex.filled {
+    background: linear-gradient(135deg, rgba(14,165,233,0.25), rgba(139,92,246,0.18));
+    animation: hexBreathe 2.5s ease-in-out infinite;
+  }
+
+  .hex-cell:nth-child(odd) .hex.filled  { animation-delay: 0s; }
+  .hex-cell:nth-child(even) .hex.filled { animation-delay: 0.6s; }
+  .hex-cell:nth-child(3n) .hex.filled  { animation-delay: 1.2s; }
+  .hex-cell:nth-child(5n+2) .hex.filled { animation-delay: 1.8s; }
+
+  @keyframes hexBreathe {
+    0%, 100% { opacity: 0.40; }
+    50% { opacity: 0.80; }
+  }
+
+  .hex-cell .hex:hover {
+    background: linear-gradient(135deg, rgba(14,165,233,0.55), rgba(139,92,246,0.35));
+    transform: scale(1.15);
+    z-index: 2;
+    transition: all 0.2s ease;
+  }
+
+  .agents-number-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .agents-number-overlay .num {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+    text-shadow: 0 0 40px rgba(14,165,233,0.15);
+  }
+
+  .agents-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  .highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .highlight-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    box-shadow: var(--card-shadow);
+  }
+
+  .highlight-card .phase-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .highlight-card .phase-tag.design {
+    background: rgba(139,92,246,0.08);
+    color: var(--accent-violet);
+    border: 1px solid rgba(139,92,246,0.15);
+  }
+
+  .highlight-card .phase-tag.dev {
+    background: rgba(14,165,233,0.08);
+    color: var(--accent);
+    border: 1px solid rgba(14,165,233,0.15);
+  }
+
+  .highlight-card h3 {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .highlight-card .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .highlight-card .feature-list li {
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .highlight-card .feature-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 7px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .pipeline {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .pipeline .step {
+    flex: 1;
+    text-align: center;
+    padding: 7px 2px;
+    background: rgba(14,165,233,0.03);
+    border-radius: 6px;
+    border: 1px solid rgba(14,165,233,0.08);
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .pipeline .arrow {
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 12px 0 0;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 14px 48px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--gradient-brand);
+    border: none;
+    border-radius: 8px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 16px rgba(14,165,233,0.2);
+  }
+
+  .cta-button:hover {
+    box-shadow: 0 4px 24px rgba(14,165,233,0.35), 0 2px 8px rgba(139,92,246,0.15);
+    transform: translateY(-2px);
+  }
+
+  .cta-hint {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 8px;
+  }
+
+  .trust-badges {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    border: 1px solid rgba(14,165,233,0.10);
+    color: var(--text-muted);
+    background: rgba(14,165,233,0.03);
+  }
+
+  .trust-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  .footer .brand {
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .poster { width: 100%; padding: 32px 20px; gap: 28px; }
+    .header h1 { font-size: 36px; letter-spacing: 2px; }
+    .six-principles { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .highlights { grid-template-columns: 1fr; }
+    .principle-card { padding: 16px 12px; }
+    .principle-card .char { font-size: 32px; }
+    .hex-cell { width: 42px; height: 36px; margin-bottom: -7px; }
+    .hex-row.offset { padding-left: 24px; }
+    .agents-number-overlay .num { font-size: 28px; }
+    .footer { flex-direction: column; gap: 12px; }
+    .trust-badges { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 粒子 Canvas -->
+<canvas id="particleCanvas"></canvas>
+<div class="noise-overlay"></div>
+
+<div class="poster">
+
+  <div class="header">
+    <div class="badge">AI-DRIVEN DEVELOPMENT</div>
+    <h1>AI编程智驾</h1>
+    <p class="subtitle">让 AI 自动驾驶编程全流程，零手动干预</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="six-principles">
+    <div class="principle-card">
+      <span class="char">稳</span>
+      <div class="label">稳固可靠</div>
+      <div class="desc">好用不贵<br>长期维护保障</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">省</span>
+      <div class="label">成本优化</div>
+      <div class="desc">模型搭配<br>稳固 ROI</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">准</span>
+      <div class="label">精准可靠</div>
+      <div class="desc">避免通用大模型哄骗<br>浏览器自动化测试</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">夯</span>
+      <div class="label">力大碾压</div>
+      <div class="desc">多Agent并发竞争<br>博采众长</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">快</span>
+      <div class="label">极速交付</div>
+      <div class="desc">MVP快速验证<br>能Mock就Mock</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">懂</span>
+      <div class="label">知你所想</div>
+      <div class="desc">动前对齐<br>动后 Diff 确认</div>
+    </div>
+  </div>
+
+  <!-- ===== AI产出本质要素 层级图 ===== -->
+  <div class="quality-layers-section">
+    <div class="section-label">· AI 产出效果的本质要素 ·</div>
+    <div class="layers-stack">
+      <div class="layer-row">
+        <div class="layer-block layer-prompt">
+          <span class="layer-name">提示词 + 输入</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">最终决定输出质量 · <em>垃圾进 = 垃圾出</em></span>
+        </div>
+        <div class="layer-compare">
+          相同 Skill/Rules 下<br><span>比 提示词和输入质量</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▲ 相同条件下逐层比拼 ▲</div>
+      <div class="layer-row">
+        <div class="layer-block layer-skill">
+          <span class="layer-name">Skill + Rules</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">可持续优化的核心 · <em>知识沉淀与工程规范</em></span>
+        </div>
+        <div class="layer-compare">
+          相同 Agent 下<br><span>比 Skill/Rules 质量（可持续优化）</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▼</div>
+      <div class="layer-row">
+        <div class="layer-block layer-agent">
+          <span class="layer-name">Agent 编排</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">任务分解与多代理协作 · <em>调度与执行力</em></span>
+        </div>
+        <div class="layer-compare">
+          相同大模型下<br><span>比 Agent 编排能力</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▼</div>
+      <div class="layer-row">
+        <div class="layer-block layer-model">
+          <span class="layer-name">大 模 型</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">底层能力基座 · <em>决定推理与生成的天花板</em></span>
+        </div>
+        <div class="layer-compare">
+          基础能力<br><span>相同起点下的竞争维度</span>
+        </div>
+      </div>
+      <div class="gigo-bar">
+        <span class="gigo-label">GIGO</span>
+        <span class="gigo-arrow">⚠</span>
+        <span class="gigo-text">垃圾输入 → 垃圾输出：最上层提示词与输入质量，才是最终效果的决定性因素</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="agents-section">
+    <div class="section-label">· 智能协作引擎 ·</div>
+    <div class="hex-container" id="hexContainer" style="position:relative;">
+      <div class="agents-number-overlay">
+        <div class="num">33</div>
+      </div>
+    </div>
+    <div class="agents-desc">个 Agent 协作 · 确保交付质量与速度</div>
+  </div>
+
+  <div class="highlights">
+    <div class="highlight-card">
+      <span class="phase-tag design">需求设计</span>
+      <h3>简易模板 · 快速生成</h3>
+      <ul class="feature-list">
+        <li>智能对齐表格 — 结构清晰，团队对齐零偏差</li>
+        <li>一键生成 PRD — 产品需求文档自动输出</li>
+        <li>原型即所见 — UI 原型与设计稿无缝转换</li>
+      </ul>
+      <div class="pipeline">
+        <span class="step">需求输入</span><span class="arrow">→</span>
+        <span class="step">对齐表格</span><span class="arrow">→</span>
+        <span class="step">PRD文档</span><span class="arrow">→</span>
+        <span class="step">UI原型</span><span class="arrow">→</span>
+        <span class="step">任务拆解</span>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <span class="phase-tag dev">编码测试</span>
+      <h3>33 Agent · 并发协作</h3>
+      <ul class="feature-list">
+        <li>全栈并行开发 — 前后端 + 测试 三线并发推进</li>
+        <li>智能质量门控 — 每阶段自动验证，不达标不通过</li>
+        <li>多视角审查 — 安全/性能/架构三方评审覆盖</li>
+      </ul>
+      <div class="pipeline">
+        <span class="step">代码生成</span><span class="arrow">→</span>
+        <span class="step">安全扫描</span><span class="arrow">→</span>
+        <span class="step">测试验证</span><span class="arrow">→</span>
+        <span class="step">审查评审</span><span class="arrow">→</span>
+        <span class="step">交付部署</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="cta-section">
+    <a href="#" class="cta-button">立即启动</a>
+    <p class="cta-hint">从环境搭建到代码交付 · AI 全程自动驾驶</p>
+  </div>
+
+  <div class="footer">
+    <div class="trust-badges">
+      <div class="trust-badge"><span class="dot"></span>零手动干预</div>
+      <div class="trust-badge"><span class="dot"></span>质量门控通过</div>
+      <div class="trust-badge"><span class="dot"></span>安全合规就绪</div>
+    </div>
+    <div class="brand">AICODING · AI编程智驾</div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ===== 1. 蜂巢生成 =====
+  var container = document.getElementById('hexContainer');
+  var hexRows = [5, 6, 6, 5, 6, 5];
+  var agentIndex = 1;
+
+  for (var r = 0; r < hexRows.length; r++) {
+    var rowDiv = document.createElement('div');
+    rowDiv.className = 'hex-row';
+    if (r % 2 === 0) rowDiv.classList.add('offset');
+
+    for (var c = 0; c < hexRows[r]; c++) {
+      var cell = document.createElement('div');
+      cell.className = 'hex-cell';
+      var hex = document.createElement('div');
+      hex.className = 'hex filled';
+      hex.title = 'Agent #' + agentIndex;
+      cell.appendChild(hex);
+      rowDiv.appendChild(cell);
+      agentIndex++;
+    }
+    container.appendChild(rowDiv);
+  }
+
+  // ===== 2. Antigravity 粒子系统 (浅色版) =====
+  var canvas = document.getElementById('particleCanvas');
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var PARTICLE_COUNT = 180;
+  var REPULSE_RADIUS = 180;
+  var REPULSE_FORCE = 0.14;
+  var EASING = 0.06;
+
+  var mouseX = -1000;
+  var mouseY = -1000;
+  var mouseTargetX = -1000;
+  var mouseTargetY = -1000;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function Particle(x, y, depth) {
+    this.x = x;
+    this.y = y;
+    this.baseX = x;
+    this.baseY = y;
+    this.depth = depth;
+    this.speed = 0.15 + depth * 0.4;
+    this.size = 0.5 + depth * 1.6;
+    this.angle = Math.random() * Math.PI * 2;
+    this.angleSpeed = (Math.random() - 0.5) * 0.006;
+    this.trailLength = 0;
+    this.targetTrailLength = 0;
+  }
+
+  Particle.prototype.update = function() {
+    this.angle += this.angleSpeed;
+    this.baseX += Math.cos(this.angle) * this.speed * 0.25;
+    this.baseY += Math.sin(this.angle) * this.speed * 0.18;
+
+    if (this.baseX < -50) this.baseX = canvas.width + 50;
+    if (this.baseX > canvas.width + 50) this.baseX = -50;
+    if (this.baseY < -50) this.baseY = canvas.height + 50;
+    if (this.baseY > canvas.height + 50) this.baseY = -50;
+
+    var dx = this.x - mouseX;
+    var dy = this.y - mouseY;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < REPULSE_RADIUS && mouseX > 0) {
+      var force = (REPULSE_RADIUS - dist) / REPULSE_RADIUS;
+      force = force * force * REPULSE_FORCE * (0.5 + this.depth * 1.5);
+      var angle = Math.atan2(dy, dx);
+      this.targetTrailLength = force * 50;
+      this.x += Math.cos(angle) * force * 7;
+      this.y += Math.sin(angle) * force * 7;
+    } else {
+      this.targetTrailLength = 0;
+    }
+
+    this.x += (this.baseX - this.x) * (0.008 + this.depth * 0.003);
+    this.y += (this.baseY - this.y) * (0.008 + this.depth * 0.003);
+    this.trailLength += (this.targetTrailLength - this.trailLength) * 0.1;
+  };
+
+  Particle.prototype.draw = function(ctx) {
+    var alpha = 0.10 + this.depth * 0.40;
+    var hue = 197 + this.depth * 80; // 天蓝 ~ 紫罗兰
+
+    // 拖尾线
+    if (this.trailLength > 0.2) {
+      var trailAngle = Math.atan2(this.y - mouseY, this.x - mouseX);
+      var trailX = Math.cos(trailAngle) * this.trailLength;
+      var trailY = Math.sin(trailAngle) * this.trailLength;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x + trailX, this.y + trailY);
+      ctx.strokeStyle = 'hsla(' + hue + ', 65%, 60%, ' + (alpha * 0.45) + ')';
+      ctx.lineWidth = this.size * 0.5;
+      ctx.stroke();
+    }
+
+    // 粒子本体
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = 'hsla(' + hue + ', 55%, 65%, ' + alpha + ')';
+    ctx.fill();
+  };
+
+  function initParticles() {
+    particles = [];
+    for (var i = 0; i < PARTICLE_COUNT; i++) {
+      var x = Math.random() * canvas.width;
+      var y = Math.random() * canvas.height;
+      var depth = Math.random();
+      particles.push(new Particle(x, y, depth));
+    }
+  }
+  initParticles();
+  window.addEventListener('resize', initParticles);
+
+  function animate() {
+    // 白色覆层 - 运动模糊
+    ctx.fillStyle = 'rgba(248, 250, 252, 0.22)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (mouseX > 0) {
+      // 底层大范围氛围光
+      var ambient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 450);
+      ambient.addColorStop(0, 'rgba(14, 165, 233, 0.04)');
+      ambient.addColorStop(0.5, 'rgba(14, 165, 233, 0.012)');
+      ambient.addColorStop(1, 'transparent');
+      ctx.fillStyle = ambient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 顶层聚焦光
+      var core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 140);
+      core.addColorStop(0, 'rgba(139, 92, 246, 0.06)');
+      core.addColorStop(0.5, 'rgba(14, 165, 233, 0.025)');
+      core.addColorStop(1, 'transparent');
+      ctx.fillStyle = core;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    for (var i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw(ctx);
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    mouseTargetX = e.clientX;
+    mouseTargetY = e.clientY;
+  });
+
+  document.addEventListener('mouseleave', function() {
+    mouseTargetX = -1000;
+    mouseTargetY = -1000;
+  });
+
+  document.addEventListener('touchmove', function(e) {
+    mouseTargetX = e.touches[0].clientX;
+    mouseTargetY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    mouseTargetX = -1000;
+    mouseTargetY = -1000;
+  });
+
+  function lerpMouse() {
+    mouseX += (mouseTargetX - mouseX) * EASING;
+    mouseY += (mouseTargetY - mouseY) * EASING;
+    requestAnimationFrame(lerpMouse);
+  }
+
+  animate();
+  lerpMouse();
+})();
+</script>
+
+</body>
+</html>

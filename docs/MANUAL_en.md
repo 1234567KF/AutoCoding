@@ -440,8 +440,8 @@ User says "允许 AI 自动扩充技能" (Allow AI to automatically expand skill
 
 | Document | Description |
 |----------|-------------|
-| [README.md](README.md) | Project introduction (GitHub homepage) |
+| [README.md](../README.md) | Project introduction (GitHub homepage) |
 | [MANUAL.md](MANUAL.md) | Complete user manual (you are here) |
 | [INSTALL.md](INSTALL.md) | AI execution installation guide |
-| [CHANGELOG.md](CHANGELOG.md) | Version change log |
+| [CHANGELOG.md](../CHANGELOG.md) | Version change log |
 | [FEATURES.md](FEATURES.md) | Framework features introduction |

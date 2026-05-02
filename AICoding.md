@@ -67,14 +67,14 @@ git clone https://github.com/1234567KF/AutoCoding.git $env:TEMP\AutoCoding
 
 **下载后，你(AI)必须**：
 1. 进入项目目录：`cd $env:TEMP\AutoCoding` (Windows) / `cd /tmp/AutoCoding` (Linux/macOS)
-2. 读取 `INSTALL.md` 文件
-3. **严格按照 INSTALL.md 的指令完成所有安装步骤**
+2. 读取 `docs/INSTALL.md` 文件
+3. **严格按照 docs/INSTALL.md 的指令完成所有安装步骤**
 
 ---
 
-## 阶段3：按 INSTALL.md 完成安装
+## 阶段3：按 docs/INSTALL.md 完成安装
 
-INSTALL.md 包含以下步骤（你逐项执行）：
+docs/INSTALL.md 包含以下步骤（你逐项执行）：
 
 | 步骤 | 内容 | 自动 |
 |------|------|------|
@@ -89,7 +89,7 @@ INSTALL.md 包含以下步骤（你逐项执行）：
 | 安装 superpowers | `/plugin install superpowers@claude-plugins-official` | **需用户确认** |
 | 配置权限模式 | 设置 bypassPermissions | ✓ |
 
-**执行原则（来自 INSTALL.md）**：
+**执行原则（来自 docs/INSTALL.md）**：
 1. 先检测，缺什么装什么
 2. Token 配置需要用户介入，提示用户提供
 3. 遇到错误自动修复，不中断（自愈式控制）

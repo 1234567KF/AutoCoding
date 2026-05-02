@@ -336,8 +336,8 @@ Pipeline 自动：
 
 | 文档 | 说明 |
 |------|------|
-| [README.md](README.md) | 项目介绍（GitHub 首页） |
+| [README.md](../README.md) | 项目介绍（GitHub 首页） |
 | [MANUAL.md](MANUAL.md) | 完整使用手册（你在这里） |
 | [INSTALL.md](INSTALL.md) | AI 执行安装指南 |
-| [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
-| [AI编程智驾框架特性.md](AI编程智驾框架特性.md) | 框架特性介绍 |
+| [CHANGELOG.md](../CHANGELOG.md) | 版本变更记录 |
+| [FEATURES.md](FEATURES.md) | 功能特性介绍 |

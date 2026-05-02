@@ -1,6 +1,6 @@
 # AI编程智驾 — 项目配置
 
-> 总纲：[AICoding原则.docx](AICoding原则.docx) — AI编程修炼手册2026
+> 总纲：[AICoding原则.docx](docs/AICoding原则.docx) — AI编程修炼手册2026
 
 本项目是 AI 编程工作台的完整技能集合，遵循**稳、省、准、测的准、夯、快、懂**六大原则。
 
@@ -101,7 +101,7 @@ claude
 
 ## 更多信息
 
-- [AICoding原则.docx](AICoding原则.docx) — 修炼总纲
+- [AICoding原则.docx](docs/AICoding原则.docx) — 修炼总纲
 - [AICoding.md](AICoding.md) — 单文件入口（给 AI 看）
-- [INSTALL.md](INSTALL.md) — AI 安装指南
-- [MANUAL.md](MANUAL.md) — 用户使用手册
+- [INSTALL.md](docs/INSTALL.md) — AI 安装指南
+- [MANUAL.md](docs/MANUAL.md) — 用户使用手册

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AICoding — AI编程智驾</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* Qoder 风格：深蓝企业色系 */
+  :root {
+    --bg-primary: #080b14;
+    --bg-secondary: #0d1120;
+    --bg-card: rgba(255,255,255,0.025);
+    --border-subtle: rgba(99,102,241,0.10);
+    --border-active: rgba(99,102,241,0.30);
+    --accent: #6366f1;
+    --accent-light: #818cf8;
+    --accent-cyan: #22d3ee;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --gradient-brand: linear-gradient(135deg, #6366f1, #818cf8, #22d3ee);
+    --success: #22c55e;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 精致的网格背景 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* 顶部柔光 */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .poster {
+    width: 1200px;
+    min-height: 800px;
+    padding: 60px 80px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    text-align: center;
+    position: relative;
+  }
+
+  .header .badge {
+    display: inline-block;
+    padding: 5px 18px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    color: var(--accent-light);
+    font-size: 13px;
+    letter-spacing: 3px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    background: rgba(99,102,241,0.05);
+  }
+
+  .header h1 {
+    font-size: 72px;
+    font-weight: 800;
+    background: var(--gradient-brand);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease-in-out infinite;
+    line-height: 1.15;
+    letter-spacing: 4px;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 200% center; }
+  }
+
+  .header .subtitle {
+    color: var(--text-secondary);
+    font-size: 18px;
+    margin-top: 14px;
+    letter-spacing: 2px;
+    font-weight: 400;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), var(--border-active), var(--border-subtle), transparent);
+  }
+
+  /* ===== 六字真言 ===== */
+  .six-principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .principle-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .principle-card:hover {
+    background: rgba(99,102,241,0.04);
+    border-color: var(--border-active);
+    transform: translateY(-3px);
+  }
+
+  .principle-card .char {
+    font-size: 44px;
+    font-weight: 800;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  .principle-card .label {
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .principle-card .desc {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* ===== AI产出本质要素 层级图 ===== */
+  .quality-layers-section {
+    text-align: center;
+  }
+
+  .quality-layers-section .section-label {
+    color: var(--accent-light);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    display: inline-block;
+    padding: 6px 24px;
+    border-radius: 20px;
+    background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+
+  .layers-stack {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 20px 12px;
+    border-radius: 14px;
+    background: rgba(99,102,241,0.025);
+    border: 1px solid rgba(99,102,241,0.08);
+  }
+
+  .layer-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .layer-block {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: 1px solid rgba(99,102,241,0.18);
+    background: rgba(99,102,241,0.04);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+  }
+
+  .layer-block:hover {
+    border-color: var(--border-active);
+    background: rgba(99,102,241,0.08);
+    transform: translateY(-2px);
+  }
+
+  .layer-block .layer-name {
+    font-size: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 130px;
+    text-align: right;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .layer-block .layer-divider-v {
+    width: 1px;
+    height: 30px;
+    background: rgba(99,102,241,0.20);
+  }
+
+  .layer-block .layer-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .layer-block .layer-desc em {
+    font-style: normal;
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  /* 各层颜色微差 */
+  .layer-block.layer-model {
+    border-color: rgba(99,102,241,0.25);
+    border-left: 3px solid #6366f1;
+    background: rgba(99,102,241,0.05);
+  }
+  .layer-block.layer-agent {
+    border-color: rgba(129,140,248,0.22);
+    border-left: 3px solid #818cf8;
+    background: rgba(129,140,248,0.04);
+  }
+  .layer-block.layer-skill {
+    border-color: rgba(34,211,238,0.22);
+    border-left: 3px solid #22d3ee;
+    background: rgba(34,211,238,0.04);
+  }
+  .layer-block.layer-prompt {
+    border-color: rgba(168,85,247,0.28);
+    border-left: 3px solid #a855f7;
+    background: rgba(168,85,247,0.05);
+  }
+
+  /* 层级递进指示箭头 */
+  .layer-compare {
+    width: 190px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1.6;
+    padding: 0 8px;
+  }
+
+  .layer-compare span {
+    display: block;
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* 层间递进箭头 */
+  .layer-arrow-down {
+    text-align: center;
+    padding: 2px 0;
+    font-size: 14px;
+    color: rgba(99,102,241,0.25);
+    letter-spacing: 4px;
+  }
+
+  /* GIGO 警示条 */
+  .gigo-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(239,68,68,0.20);
+  }
+
+  .gigo-bar .gigo-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ef4444;
+    letter-spacing: 3px;
+    padding: 2px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(239,68,68,0.25);
+    background: rgba(239,68,68,0.10);
+  }
+
+  .gigo-bar .gigo-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .gigo-bar .gigo-arrow {
+    color: #ef4444;
+    font-size: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .layers-stack { padding: 12px 8px 8px; }
+    .layer-row { flex-direction: column; gap: 6px; }
+    .layer-compare { width: 100%; order: -1; padding: 6px 0; }
+    .layer-block { flex-direction: column; gap: 6px; padding: 12px 16px; }
+    .layer-block .layer-name { min-width: auto; text-align: center; }
+    .layer-block .layer-divider-v { display: none; }
+    .layer-block .layer-desc { text-align: center; }
+    .layer-block .layer-block,
+    .layer-block.layer-model,
+    .layer-block.layer-agent,
+    .layer-block.layer-skill,
+    .layer-block.layer-prompt { border-left: 1px solid; }
+    .gigo-bar { flex-direction: column; gap: 6px; }
+    .layer-arrow-down { font-size: 12px; }
+  }
+
+  /* ===== 33 Agent 蜂巢 ===== */
+  .agents-section {
+    text-align: center;
+  }
+
+  .agents-section .section-label {
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  .hex-row {
+    display: flex;
+    gap: 0;
+  }
+
+  .hex-row.offset {
+    padding-left: 35px;
+  }
+
+  .hex-cell {
+    width: 62px;
+    height: 52px;
+    position: relative;
+    margin: 0 -1px;
+    margin-bottom: -10px;
+  }
+
+  .hex-cell .hex {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: rgba(99,102,241,0.08);
+    transition: all 0.4s ease;
+  }
+
+  .hex-cell .hex.filled {
+    background: linear-gradient(135deg, rgba(99,102,241,0.30), rgba(129,140,248,0.20));
+    animation: hexBreathe 2.5s ease-in-out infinite;
+  }
+
+  .hex-cell:nth-child(odd) .hex.filled  { animation-delay: 0s; }
+  .hex-cell:nth-child(even) .hex.filled { animation-delay: 0.6s; }
+  .hex-cell:nth-child(3n) .hex.filled  { animation-delay: 1.2s; }
+  .hex-cell:nth-child(5n+2) .hex.filled { animation-delay: 1.8s; }
+
+  @keyframes hexBreathe {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.85; }
+  }
+
+  .hex-cell .hex:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.6), rgba(34,211,238,0.4));
+    transform: scale(1.15);
+    z-index: 2;
+    transition: all 0.2s ease;
+  }
+
+  /* 覆盖 "33" 数字 */
+  .agents-number-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .agents-number-overlay .num {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+    text-shadow: 0 0 40px rgba(99,102,241,0.3);
+  }
+
+  .agents-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== 亮点双栏 ===== */
+  .highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .highlight-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+  }
+
+  .highlight-card .phase-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .highlight-card .phase-tag.design {
+    background: rgba(99,102,241,0.12);
+    color: var(--accent-light);
+  }
+
+  .highlight-card .phase-tag.dev {
+    background: rgba(34,211,238,0.10);
+    color: var(--accent-cyan);
+  }
+
+  .highlight-card h3 {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .highlight-card .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .highlight-card .feature-list li {
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .highlight-card .feature-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 7px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* 流水线 */
+  .pipeline {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .pipeline .step {
+    flex: 1;
+    text-align: center;
+    padding: 7px 2px;
+    background: rgba(99,102,241,0.04);
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .pipeline .arrow {
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    text-align: center;
+    padding: 12px 0 0;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 14px 48px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 8px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 16px rgba(99,102,241,0.25);
+  }
+
+  .cta-button:hover {
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    box-shadow: 0 4px 24px rgba(99,102,241,0.4);
+    transform: translateY(-2px);
+  }
+
+  .cta-hint {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 8px;
+  }
+
+  .trust-badges {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    background: var(--bg-card);
+  }
+
+  .trust-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  .footer .brand {
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    opacity: 0.6;
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .poster { width: 100%; padding: 32px 20px; gap: 28px; }
+    .header h1 { font-size: 36px; letter-spacing: 2px; }
+    .six-principles { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .highlights { grid-template-columns: 1fr; }
+    .principle-card { padding: 16px 12px; }
+    .principle-card .char { font-size: 32px; }
+    .hex-cell { width: 42px; height: 36px; margin-bottom: -7px; }
+    .hex-row.offset { padding-left: 24px; }
+    .agents-number-overlay .num { font-size: 28px; }
+    .footer { flex-direction: column; gap: 12px; }
+    .trust-badges { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- ===== Header ===== -->
+  <div class="header">
+    <div class="badge">AI-DRIVEN DEVELOPMENT</div>
+    <h1>AI编程智驾</h1>
+    <p class="subtitle">让 AI 自动驾驶编程全流程，零手动干预</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== 六字真言 — 六宫格 ===== -->
+  <div class="six-principles">
+    <div class="principle-card">
+      <span class="char">稳</span>
+      <div class="label">稳固可靠</div>
+      <div class="desc">好用不贵<br>长期维护保障</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">省</span>
+      <div class="label">成本优化</div>
+      <div class="desc">模型搭配<br>稳固 ROI</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">准</span>
+      <div class="label">精准可靠</div>
+      <div class="desc">避免通用大模型哄骗<br>浏览器自动化测试</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">夯</span>
+      <div class="label">力大碾压</div>
+      <div class="desc">多Agent并发竞争<br>博采众长</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">快</span>
+      <div class="label">极速交付</div>
+      <div class="desc">MVP快速验证<br>能Mock就Mock</div>
+    </div>
+    <div class="principle-card">
+      <span class="char">懂</span>
+      <div class="label">知你所想</div>
+      <div class="desc">动前对齐<br>动后 Diff 确认</div>
+    </div>
+  </div>
+
+  <!-- ===== AI产出本质要素 层级图 ===== -->
+  <div class="quality-layers-section">
+    <div class="section-label">· AI 产出效果的本质要素 ·</div>
+    <div class="layers-stack">
+      <!-- 第4层：提示词+输入（最上层，最终决定） -->
+      <div class="layer-row">
+        <div class="layer-block layer-prompt">
+          <span class="layer-name">提示词 + 输入</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">最终决定输出质量 · <em>垃圾进 = 垃圾出</em></span>
+        </div>
+        <div class="layer-compare">
+          相同 Skill/Rules 下<br><span>比 提示词和输入质量</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▲ 相同条件下逐层比拼 ▲</div>
+      <!-- 第3层：Skill + Rules -->
+      <div class="layer-row">
+        <div class="layer-block layer-skill">
+          <span class="layer-name">Skill + Rules</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">可持续优化的核心 · <em>知识沉淀与工程规范</em></span>
+        </div>
+        <div class="layer-compare">
+          相同 Agent 下<br><span>比 Skill/Rules 质量（可持续优化）</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▼</div>
+      <!-- 第2层：Agent -->
+      <div class="layer-row">
+        <div class="layer-block layer-agent">
+          <span class="layer-name">Agent 编排</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">任务分解与多代理协作 · <em>调度与执行力</em></span>
+        </div>
+        <div class="layer-compare">
+          相同大模型下<br><span>比 Agent 编排能力</span>
+        </div>
+      </div>
+      <div class="layer-arrow-down">▼</div>
+      <!-- 第1层：大模型（底层基座） -->
+      <div class="layer-row">
+        <div class="layer-block layer-model">
+          <span class="layer-name">大 模 型</span>
+          <span class="layer-divider-v"></span>
+          <span class="layer-desc">底层能力基座 · <em>决定推理与生成的天花板</em></span>
+        </div>
+        <div class="layer-compare">
+          基础能力<br><span>相同起点下的竞争维度</span>
+        </div>
+      </div>
+      <!-- GIGO 警示 -->
+      <div class="gigo-bar">
+        <span class="gigo-label">GIGO</span>
+        <span class="gigo-arrow">⚠</span>
+        <span class="gigo-text">垃圾输入 → 垃圾输出：最上层提示词与输入质量，才是最终效果的决定性因素</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== 33 Agent 蜂巢 ===== -->
+  <div class="agents-section">
+    <div class="section-label">· 智能协作引擎 ·</div>
+    <div class="hex-container" id="hexContainer" style="position:relative;">
+      <!-- 由JS动态生成蜂巢行 -->
+      <div class="agents-number-overlay">
+        <div class="num">33</div>
+      </div>
+    </div>
+    <div class="agents-desc">个 Agent 协作 · 确保交付质量与速度</div>
+  </div>
+
+  <!-- ===== 亮点双栏 ===== -->
+  <div class="highlights">
+    <div class="highlight-card">
+      <span class="phase-tag design">需求设计</span>
+      <h3>简易模板 · 快速生成</h3>
+      <ul class="feature-list">
+        <li>智能对齐表格 — 结构清晰，团队对齐零偏差</li>
+        <li>一键生成 PRD — 产品需求文档自动输出</li>
+        <li>原型即所见 — UI 原型与设计稿无缝转换</li>
+      </ul>
+      <div class="pipeline">
+        <span class="step">需求输入</span><span class="arrow">→</span>
+        <span class="step">对齐表格</span><span class="arrow">→</span>
+        <span class="step">PRD文档</span><span class="arrow">→</span>
+        <span class="step">UI原型</span><span class="arrow">→</span>
+        <span class="step">任务拆解</span>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <span class="phase-tag dev">编码测试</span>
+      <h3>33 Agent · 并发协作</h3>
+      <ul class="feature-list">
+        <li>全栈并行开发 — 前后端 + 测试 三线并发推进</li>
+        <li>智能质量门控 — 每阶段自动验证，不达标不通过</li>
+        <li>多视角审查 — 安全/性能/架构三方评审覆盖</li>
+      </ul>
+      <div class="pipeline">
+        <span class="step">代码生成</span><span class="arrow">→</span>
+        <span class="step">安全扫描</span><span class="arrow">→</span>
+        <span class="step">测试验证</span><span class="arrow">→</span>
+        <span class="step">审查评审</span><span class="arrow">→</span>
+        <span class="step">交付部署</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CTA ===== -->
+  <div class="divider"></div>
+  <div class="cta-section">
+    <a href="#" class="cta-button">立即启动</a>
+    <p class="cta-hint">从环境搭建到代码交付 · AI 全程自动驾驶</p>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <div class="footer">
+    <div class="trust-badges">
+      <div class="trust-badge"><span class="dot"></span>零手动干预</div>
+      <div class="trust-badge"><span class="dot"></span>质量门控通过</div>
+      <div class="trust-badge"><span class="dot"></span>安全合规就绪</div>
+    </div>
+    <div class="brand">AICODING · AI编程智驾</div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var container = document.getElementById('hexContainer');
+
+  // 6行蜂巢：5 + 6 + 6 + 5 + 6 + 5 = 33
+  var hexRows = [5, 6, 6, 5, 6, 5];
+  var agentIndex = 1;
+
+  for (var r = 0; r < hexRows.length; r++) {
+    var rowDiv = document.createElement('div');
+    rowDiv.className = 'hex-row';
+    // 奇数行(0,2,4)偏移产生蜂窝交错效果
+    if (r % 2 === 0) {
+      rowDiv.classList.add('offset');
+    }
+
+    for (var c = 0; c < hexRows[r]; c++) {
+      var cell = document.createElement('div');
+      cell.className = 'hex-cell';
+
+      var hex = document.createElement('div');
+      hex.className = 'hex filled';
+      hex.title = 'Agent #' + agentIndex;
+
+      cell.appendChild(hex);
+      rowDiv.appendChild(cell);
+      agentIndex++;
+    }
+    container.appendChild(rowDiv);
+  }
+})();
+</script>
+
+</body>
+</html>

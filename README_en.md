@@ -55,7 +55,7 @@ npm install -g ruflo
 git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 ```
 
-See [INSTALL.md](INSTALL.md) for details
+See [INSTALL.md](docs/INSTALL.md) for details
 
 ---
 
@@ -79,8 +79,8 @@ See [INSTALL.md](INSTALL.md) for details
 | Document | Description |
 |----------|-------------|
 | [README.md](README.md) | Project introduction (you are here) |
-| [MANUAL.md](MANUAL.md) | Complete user manual (for humans) |
-| [INSTALL.md](INSTALL.md) | AI execution installation guide (for AI) |
+| [MANUAL.md](docs/MANUAL.md) | Complete user manual (for humans) |
+| [INSTALL.md](docs/INSTALL.md) | AI execution installation guide (for AI) |
 | [CHANGELOG.md](CHANGELOG.md) | Version change log |
 
 ---
@@ -90,12 +90,26 @@ See [INSTALL.md](INSTALL.md) for details
 ```
 AutoCoding/
 ├── README.md              # Project entry
-├── MANUAL.md              # Complete manual
-├── INSTALL.md             # AI installation guide
+├── README_en.md           # English entry
+├── AICoding.md            # Single-file entry
 ├── CHANGELOG.md           # Version history
+├── CONTRIBUTING.md        # Contribution guide
 ├── LICENSE                # MIT license
-├── CONTRIBUTING.md         # Contribution guide
-├── AI编程智驾框架特性.md   # Framework features (Chinese)
+│
+├── docs/                  # Documentation
+│   ├── MANUAL.md          # Complete manual
+│   ├── MANUAL_en.md       # English manual
+│   ├── INSTALL.md         # AI installation guide
+│   ├── FEATURES.md        # Feature list
+│   └── CREDITS.md         # Third-party credits
+│
+├── assets/                # Static assets
+│   └── posters/           # Promotional posters
+│
+├── .claude/               # Claude Code config
+│   ├── CLAUDE.md
+│   ├── settings.json
+│   └── skills/            # Skills
 │
 ├── templates/             # Configuration templates
 │   ├── settings.json.template

@@ -1,11 +1,24 @@
-# AI编程智驾 (AI Programming Autopilot)
+<p align="center">
+  <a href="https://github.com/1234567KF/AutoCoding/blob/main/assets/posters/%E5%AE%A3%E4%BC%A0%E6%B5%B7%E6%8A%A5_%E6%B5%85%E8%89%B2.html">
+    <img src="https://img.shields.io/badge/🖼️_查看完整海报-HTML-0ea5e9?style=for-the-badge&logo=html5&logoColor=white" alt="查看海报">
+  </a>
+  <a href="https://github.com/1234567KF/AutoCoding/blob/main/AICoding.md">
+    <img src="https://img.shields.io/badge/⚡_单文件入口-AICoding.md-22c55e?style=for-the-badge" alt="单文件入口">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-8b5cf6.svg?style=for-the-badge" alt="License">
+  </a>
+</p>
 
-> 让 AI 自动驾驶编程全流程，从环境搭建到代码交付，零手动干预。
-> 总纲：[AICoding原则.docx](AICoding原则.docx) — **稳、省、准、测的准、夯、快、懂**
+# AI编程智驾 — 让 AI 自动驾驶编程全流程
+
+> 从环境搭建到代码交付，零手动干预。只需一个文件，放进 AI IDE，全自动完成。
+>
+> 总纲：[AICoding原则.docx](docs/AICoding原则.docx) — **稳 · 省 · 准 · 测的准 · 夯 · 快 · 懂**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**AI编程智驾** 是一套完整的 AI 编程工作台，遵循六大原则，集成 Claude Code、gspowers SOP 导航、ruflo 多 Agent 并行执行等工具。
+**AI编程智驾** 是一套完整的 AI 编程工作台，遵循七大原则，集成 Claude Code、gspowers SOP 导航、claude-flow 多 Agent 并行执行，11 个自建 kf- 系列技能覆盖从 PRD 到 Spec 到编码到审查的全链路。
 
 ---
 
@@ -15,8 +28,7 @@
 |------|------|---------|
 | **稳** | 好用不贵，长期维护 | gspowers、gstack |
 | **省** | 模型搭配，稳固 ROI | kf-model-router、kf-code-review-graph、RTK |
-| **准** | 避免通用大模型哄骗 | kf-web-search |
-| **测的准** | 浏览器自动化测试 | kf-browser-ops |
+| **准** | 避免通用大模型哄骗 | kf-web-search kf-browser-ops|
 | **夯** | 多 Agent 并发竞争碾压 | kf-multi-team-compete、kf-triple-collaboration |
 | **快** | MVP 快速验证，能 Mock 就 Mock | kf-spec、kf-prd-generator |
 | **懂** | 动前对齐，动后 diff | kf-alignment |
@@ -34,7 +46,7 @@
 | [ruflo](https://github.com/ruvnet/ruflo) | ruvnet | MIT | 多 Agent 编排 |
 | [RTK](https://github.com/rafaelkallis/rtk) | rafaelkallis | MIT | Token 优化 |
 
-详见 [CREDITS.md](CREDITS.md) 完整致谢。
+详见 [CREDITS.md](docs/CREDITS.md) 完整致谢。
 
 ---
 
@@ -83,7 +95,7 @@ npm install -g ruflo
 git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 ```
 
-详见 [INSTALL.md](INSTALL.md)
+详见 [INSTALL.md](docs/INSTALL.md)
 
 ---
 
@@ -112,10 +124,12 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 | 文档 | 说明 |
 |------|------|
 | [README.md](README.md) | 项目介绍（你在这里） |
-| [MANUAL.md](MANUAL.md) | 完整使用手册（给人看） |
-| [INSTALL.md](INSTALL.md) | AI 执行安装指南（给 AI 看） |
+| [AICoding.md](AICoding.md) | 单文件入口（给 AI 看） |
+| [MANUAL.md](docs/MANUAL.md) | 完整使用手册（给人看） |
+| [INSTALL.md](docs/INSTALL.md) | AI 执行安装指南（给 AI 看） |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
-| [CREDITS.md](CREDITS.md) | 第三方开源项目致谢 |
+| [FEATURES.md](docs/FEATURES.md) | 功能特性介绍 |
+| [CREDITS.md](docs/CREDITS.md) | 第三方开源项目致谢 |
 
 ---
 
@@ -124,13 +138,25 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 ```
 AI编程智驾/
 ├── README.md              # 项目入口
-├── MANUAL.md              # 完整手册
-├── INSTALL.md             # AI 安装指南
+├── README_en.md           # 英文入口
 ├── AICoding.md            # 单文件入口（给 AI 看）
 ├── CHANGELOG.md           # 版本记录
-├── CREDITS.md             # 第三方致谢
+├── CONTRIBUTING.md        # 贡献指南
 ├── LICENSE                # MIT 许可证
-├── mvp技术栈.md            # MVP 技术栈定义
+│
+├── docs/                  # 文档目录
+│   ├── MANUAL.md          # 完整手册
+│   ├── MANUAL_en.md       # 英文手册
+│   ├── INSTALL.md         # AI 安装指南
+│   ├── FEATURES.md        # 功能特性
+│   ├── CREDITS.md         # 第三方致谢
+│   ├── mvp技术栈.md        # MVP 技术栈定义
+│   ├── 人类使用手册.md     # 简明工作流
+│   ├── 打包清单.md         # 文件清单
+│   └── AICoding原则.docx  # 修炼总纲
+│
+├── assets/                # 静态资源
+│   └── posters/           # 宣传海报
 │
 ├── .claude/               # Claude Code 项目配置
 │   ├── CLAUDE.md          # 项目指令
