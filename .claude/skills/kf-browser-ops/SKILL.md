@@ -3,6 +3,7 @@ name: kf-browser-ops
 description: |
   浏览器自动化操作。打开页面、截图、填写表单、点击元素、验证状态、
   复现Bug、跑用户流程。优先使用 gstack 内置 browse，降级到 Playwright。
+  可被 kf-multi-team-compete（/夯）Stage 3 自动调用做 UI 自动化测试。
   运行 /browser-ops 获取操作指引。
 triggers:
   - browser-ops
@@ -15,6 +16,9 @@ allowed-tools:
   - Read
   - WebFetch
   - AskUserQuestion
+metadata:
+  called_by:
+    - kf-multi-team-compete  # Stage 3 自动调用做 UI 测试
 ---
 
 # 浏览器自动化操作

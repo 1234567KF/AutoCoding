@@ -8,21 +8,21 @@
 
 ### kf- 系列（团队自建）
 
-| 技能 | 原则 | 说明 |
-|------|------|------|
-| `kf-go` | 快 | 工作流导航：/go 查看全局路径和当前进度 |
-| `kf-spec` | 快 | Spec 驱动开发：需求 → Spec → 分步实施 |
-| `kf-code-review-graph` | 省 | 代码审查依赖图谱，轻装上阵快速提取 |
-| `kf-web-search` | 准 | 多引擎智能搜索，避免通用大模型哄骗 |
-| `kf-browser-ops` | 测的准 | 浏览器自动化测试，Playwright 复现 bug |
-| `kf-multi-team-compete` | 夯 | 红蓝绿队多 Agent 并发竞争评审 |
-| `kf-alignment` | 懂 | 对齐工作流：动前谈理解，动后谈 diff |
-| `kf-model-router` | 省 | 模型智能路由：计划 Opus，执行 Sonnet |
-| `kf-prd-generator` | 快 | SDD Excel → PRD 生成器 |
-| `kf-triple-collaboration` | 夯 | 三方协作评审 |
-| `kf-ui-prototype-generator` | 快 | UI 原型生成器 |
-| `kf-skill-design-expert` | 稳 | Skill 设计专家 |
-| `kf-markdown-to-docx-skill` | — | Markdown → DOCX 转换 |
+| 技能 | 别名 | 原则 | 调用链 | 说明 |
+|------|------|------|--------|------|
+| `kf-go` | `/go` | 快 | 独立 | 工作流导航：查看全局路径和当前进度 |
+| `kf-spec` | spec coding | 快 | 自动调用 kf-alignment、kf-model-router；被 `/夯` 调用 | Spec 驱动开发：需求 → Spec → 分步实施 |
+| `kf-code-review-graph` | `/review-graph` | 省 | 被 `/夯` Stage 4 自动调用 | 代码审查依赖图谱，轻装上阵快速提取 |
+| `kf-web-search` | `/web-search` | 准 | 被 `/夯` agent 按需自动调用 | 多引擎智能搜索，agent 自动搜索技术方案 |
+| `kf-browser-ops` | `/browser-ops` | 测的准 | 被 `/夯` Stage 3 自动调用 | 浏览器自动化测试，Playwright 复现 bug |
+| `kf-multi-team-compete` | **`/夯`** | 夯 | **主入口**，自动调用 7 个技能 + Pipeline 引擎 | 红蓝绿队多 Agent 并发竞争评审 |
+| `kf-alignment` | `/对齐` | 懂 | 被 kf-spec、`/夯`、kf-prd-generator 自动调用 | 对齐工作流：动前谈理解，动后谈 diff |
+| `kf-model-router` | 模型路由 | 省 | **自动触发**：所有技能启动时自动检查并切换模型 | 模型智能路由：计划 pro，执行 flash，用户无感 |
+| `kf-prd-generator` | `/prd-generator` | 快 | 自动调用 kf-alignment（产出后 Hook 对齐） | SDD Excel → PRD 生成器 |
+| `kf-triple-collaboration` | triple | 夯 | 内部 spawn（轻量版 `/夯`） | 三方协作评审 |
+| `kf-ui-prototype-generator` | — | 快 | 被 `/夯` Stage 2/5 自动调用 | UI 原型 HTML 生成 |
+| `kf-skill-design-expert` | — | 稳 | 独立 | Skill 设计专家 |
+| `kf-markdown-to-docx-skill` | — | — | 独立 | Markdown → DOCX 转换 |
 
 ### 上游技能（非自建，不加 kf- 前缀）
 
@@ -72,19 +72,35 @@ claude
 
 ## 常用触发词
 
-| 触发词 | 技能 | 原则 |
-|--------|------|------|
-| `/go` / `/导航` / `/开始` | kf-go | 快 |
-| `spec coding` / `写spec文档` | kf-spec | 快 |
-| `/对齐` / `说下你的理解` | kf-alignment | 懂 |
-| `/review-graph` | kf-code-review-graph | 省 |
-| `/web-search [问题]` | kf-web-search | 准 |
-| `/browser-ops` | kf-browser-ops | 测的准 |
-| `/夯 [任务]` | kf-multi-team-compete | 夯 |
-| `triple [任务]` | kf-triple-collaboration | 夯 |
-| `/gspowers` | gspowers | 稳 |
-| `/prd-generator` | kf-prd-generator | 快 |
-| `模型路由` / `省模式` | kf-model-router | 省 |
+| 触发词 | 技能 | 原则 | 自动调用 |
+|--------|------|------|---------|
+| `/go` / `/导航` / `/开始` | kf-go | 快 | — |
+| `/夯 [任务]` | kf-multi-team-compete | 夯 | 自动调用 7 个子技能 |
+| `spec coding` / `写spec文档` | kf-spec | 快 | 自动调用 kf-alignment + kf-model-router |
+| `/对齐` / `说下你的理解` | kf-alignment | 懂 | 被多个技能自动调用 |
+| `/review-graph` | kf-code-review-graph | 省 | 被 `/夯` 自动调用 |
+| `/web-search [问题]` | kf-web-search | 准 | 被 `/夯` agent 按需自动调用 |
+| `/browser-ops` | kf-browser-ops | 测的准 | 被 `/夯` 自动调用 |
+| `/gspowers` | gspowers | 稳 | Pipeline 引擎被 `/夯` 集成 |
+| `/prd-generator` | kf-prd-generator | 快 | 自动调用 kf-alignment |
+| `triple [任务]` | kf-triple-collaboration | 夯 | 轻量版 `/夯` |
+| `模型路由` / `省模式` | kf-model-router | 省 | **全自动**，用户无感 |
+
+## 自动调用链速览
+
+```
+用户触发 "/夯 [任务]"
+  │
+  ├─ kf-model-router 自动切换模型（pro/flash）
+  │
+  └─ 三队 Pipeline 并发（gspowers Pipeline 引擎）
+       ├─ kf-alignment   ← 需求对齐（Stage 0）
+       ├─ kf-spec        ← 需求基线（Stage 0）
+       ├─ kf-web-search  ← 技术资料搜索（Stage 1/2/3 按需）
+       ├─ kf-ui-prototype-generator ← UI 原型（Stage 2/5）
+       ├─ kf-browser-ops ← 自动化测试（Stage 3）
+       └─ kf-code-review-graph ← 代码审查（Stage 4）
+```
 
 ## 全局依赖
 

@@ -222,8 +222,8 @@ git log --oneline -3
 
 ### 什么时候用什么模型？
 
-| 场景 | 推荐模型 | 原因 |
-|------|---------|------|
+| 场景 | 自动切换模型 | 原因 |
+|------|------------|------|
 | 架构设计 / 需求澄清 | **deepseek-v4-pro**（Opus 级） | 需要深度推理、权衡取舍 |
 | 复杂 Bug 排查 | **deepseek-v4-pro**（Opus 级） | 需要完整上下文理解和推理链 |
 | 日常编码 / 执行 | **deepseek-v4-flash**（Sonnet 级） | 效率优先，常规任务性价比高 |
@@ -231,67 +231,96 @@ git log --oneline -3
 | 文档生成 | **deepseek-v4-flash**（Sonnet 级） | 结构化输出，低成本 |
 | 简单问答 / 格式转换 | 轻量模型（Haiku 级） | 极低成本，快速响应 |
 
-### 切换是自动的吗？
+### 切换机制
 
-**不是自动的。** kf-model-router 是一个建议/推荐系统，不会自动切换模型。原理：
+**自动切换，用户无感。** kf-model-router 在以下时机会被**自动触发**：
 
-- 当前环境模型由 Claude Code 启动时指定（如 deepseek-v4-pro）
-- kf-model-router 只是**分析任务类型并推荐**应该用哪个模型
-- 用户需要**手动执行** `/set-model opus|sonnet|haiku` 来切换
-- **用户有感知**：每次切换都需要手动操作，AI 不会静默切换
+| 触发场景 | 自动动作 | 用户感知 |
+|---------|---------|---------|
+| 技能启动时声明了 `recommended_model: pro` | 自动 `/set-model opus` | **无感** |
+| 技能启动时声明了 `recommended_model: flash` | 自动 `/set-model sonnet` | **无感** |
+| kf-multi-team-compete 启动（主入口） | 裁判用 pro，各队 agent 用 flash | **无感** |
+| kf-spec 进入 Step 0 技术选型 | 自动切换到 pro | **无感** |
+| kf-alignment 执行深度对齐 | 自动切换到 pro | **无感** |
+| 任务完成后回到编码阶段 | 自动切回 flash | **无感** |
 
-### kf-model-router 会被其他技能自动调用吗？
-
-**不会。** 没有任何技能会自动调用 kf-model-router。各技能是**独立运行**的，kf-model-router 的"集成"描述（配合 kf-spec、kf-code-review-graph 等）指的是**用户手动配合使用**，而非程序自动触发。
+实现方式：kf-model-router 被各技能在 frontmatter 中声明 `integrated-skills` 后，技能启动时自动通过 Hook 检查当前模型是否匹配推荐模型，不匹配则自动执行 `/set-model`。
 
 ---
 
 ## 全局技能调用链
 
-> 以下表格展示所有技能的**调用关系**和**模型需求**。调用关系分三种：
-> - **独立**：不依赖也不调用其他技能，完全自包含
-> - **内部 spawn**：技能执行时会 spawn 子 Agent 并行工作
-> - **手动配合**：建议与其他技能搭配使用，但需用户手动触发
+> 调用关系分三种：
+> - **自动调用**：主技能执行时自动触发被调用技能，用户无感
+> - **内部 spawn**：技能执行时 spawn 子 Agent 并行工作，子 Agent 可自动调用其他技能
+> - **独立**：不依赖也不调用其他技能，完全自包含（但可能**被**其他技能调用）
 
 ### kf- 系列（团队自建）
 
-| 技能 | 原则 | 调用类型 | 调用/依赖的技能 | 推荐模型 | 说明 |
-|------|------|---------|----------------|---------|------|
-| `kf-go` | 快 | 独立 | 无 | flash | 工作流导航，纯展示不执行 |
-| `kf-spec` | 快 | 独立 | 无（Step 0 建议配合 kf-model-router） | pro→flash | Spec 驱动：需求→分步实施 |
-| `kf-code-review-graph` | 省 | 独立 | 无（建议配合 kf-model-router） | flash | 代码审查依赖图谱 |
-| `kf-web-search` | 准 | 独立 | 无 | flash | 多引擎智能搜索 |
-| `kf-browser-ops` | 测的准 | 独立 | 无 | flash | Playwright 浏览器自动化 |
-| `kf-multi-team-compete` | 夯 | **内部 spawn** | 内部 spawn 3 个 Agent（红蓝绿队） | pro（裁判）+ flash（各队） | 多 Agent 并发竞争评审 |
-| `kf-alignment` | 懂 | 独立 | 无 | pro | 对齐工作流：动前谈理解，动后谈 diff |
-| `kf-model-router` | 省 | 独立 | 无（**不被任何技能自动调用**） | flash | 模型路由建议，需用户手动 /set-model |
-| `kf-prd-generator` | 快 | 独立 | 无 | flash | SDD Excel → PRD |
-| `kf-triple-collaboration` | 夯 | **内部 spawn** | 内部 spawn Agent（三方协作） | pro（协调）+ flash（各方） | 三方协作评审 |
-| `kf-ui-prototype-generator` | 快 | 独立 | 无 | flash | UI 原型 HTML 生成 |
-| `kf-skill-design-expert` | 稳 | 独立 | 无 | pro | Skill 设计专家 |
-| `kf-markdown-to-docx-skill` | — | 独立 | 无 | flash | Markdown → DOCX 转换 |
+| 技能 | 别名 | 原则 | 调用类型 | 自动调用的技能 | 被谁调用 | 推荐模型 |
+|------|------|------|---------|--------------|---------|---------|
+| `kf-go` | `/go` | 快 | 独立 | 无 | 用户手动 | flash |
+| `kf-spec` | spec coding | 快 | **自动调用** | kf-alignment（Step 1 对齐 + 产出后复盘）、kf-model-router（Step 0 切换 pro） | 用户手动、kf-multi-team-compete Stage 0 | pro→flash |
+| `kf-code-review-graph` | `/review-graph` | 省 | 独立 | 无 | kf-multi-team-compete Stage 4（自动） | flash |
+| `kf-web-search` | `/web-search` | 准 | 独立（被动技能） | 无 | **kf-multi-team-compete agent 按需自动调用**、kf-spec 资料收集、用户手动 | flash |
+| `kf-browser-ops` | `/browser-ops` | 测的准 | 独立（被动技能） | 无 | **kf-multi-team-compete Stage 3 自动调用**、用户手动 | flash |
+| `kf-multi-team-compete` | **`/夯`** | 夯 | **内部 spawn + 自动调用** | kf-alignment、kf-spec、kf-browser-ops、kf-code-review-graph、**kf-web-search**、kf-ui-prototype-generator、gspowers Pipeline | **主入口**，用户手动 `/夯` | pro（裁判+汇总）+ flash（各队 agent） |
+| `kf-alignment` | `/对齐` | 懂 | 独立（被动技能） | 无 | **kf-spec 自动调用**、**kf-multi-team-compete Stage 0/Phase 3 自动调用**、kf-prd-generator Hook 自动调用 | pro |
+| `kf-model-router` | 模型路由 | 省 | **自动触发**（Hook） | 无 | **所有声明 recommended_model 的技能启动时自动调用** | —（路由器本身） |
+| `kf-prd-generator` | `/prd-generator` | 快 | **自动调用** | kf-alignment（产出 PRD 后 Hook 触发对齐） | 用户手动 | flash |
+| `kf-triple-collaboration` | triple | 夯 | 内部 spawn | 同 kf-multi-team-compete（轻量版） | 用户手动 | pro+flash |
+| `kf-ui-prototype-generator` | — | 快 | 独立（被动技能） | 无 | kf-multi-team-compete Stage 2/5 自动调用 | flash |
+| `kf-skill-design-expert` | — | 稳 | 独立 | 无 | 用户手动 | pro |
+| `kf-markdown-to-docx-skill` | — | — | 独立 | 无 | 用户手动 | flash |
 
 ### 上游技能（gstack / gspowers）
 
-| 技能 | 来源 | 调用类型 | 调用/依赖的技能 | 推荐模型 | 说明 |
-|------|------|---------|----------------|---------|------|
-| `gspowers` | fshaan | 独立 | 无 | flash | SOP 流程导航，不调用 kf- 系列 |
-| `gstack` / `/office-hours` | garrytan | 独立 | 无（内部有自身技能链） | pro | YC 风格产品诊断 |
-| `gstack` / `/plan-ceo-review` | garrytan | 独立 | 无 | pro | CEO 视角产品评审 |
-| `gstack` / `/plan-eng-review` | garrytan | 独立 | 无 | pro | 工程架构评审 |
-| `gstack` / `/review` | garrytan | 独立 | 无 | flash | 代码审查 |
-| `gstack` / `/ship` | garrytan | 独立 | 内部调用 /review | flash | 发布：同步→测试→PR |
-| `gstack` / `/qa` | garrytan | 独立 | 内部使用 browse daemon | flash | QA 测试 |
-| `gstack` / `/autoplan` | garrytan | 独立 | 内部串联 CEO→Design→Eng | pro | 全自动评审管线 |
+| 技能 | 来源 | 调用类型 | 调用/依赖 | 说明 |
+|------|------|---------|---------|------|
+| `gspowers` | fshaan | 独立 | 无（但其 Pipeline 扩展被 kf-multi-team-compete 集成） | SOP 流程导航 |
+| `gspowers` Pipeline 扩展 | fshaan | **被集成** | **被 kf-multi-team-compete 融入**作为团队内部流水线引擎 | 阶段编排 + 产物交接 |
+| `gstack` 系列 | garrytan | 独立（内部有自身技能链） | 与 kf- 系列隔离 | 产品流程框架（office-hours/plan/review/ship/qa） |
+
+### 主入口 `/夯` 的完整调用链
+
+```
+用户: /夯 [任务]
+  │
+  ├─ kf-model-router 自动切换 → 裁判用 pro
+  │
+  ├─ Phase 1: 任务拆解
+  │     └─ kf-alignment（对齐任务理解）
+  │
+  ├─ Phase 2: 三队 Pipeline 并发
+  │   ├─ 红队 Pipeline（gspowers Pipeline 引擎）
+  │   │   ├─ Stage 0: kf-alignment + kf-spec（需求对齐）
+  │   │   ├─ Stage 1: 架构设计
+  │   │   ├─ Stage 2: kf-ui-prototype-generator（UI）+ kf-web-search（查资料）
+  │   │   ├─ Stage 3: kf-browser-ops（自动化测试）
+  │   │   ├─ Stage 4: kf-code-review-graph（代码审查）
+  │   │   └─ Stage 5: 方案汇总
+  │   ├─ 蓝队 Pipeline（同上，稳健工程视角）
+  │   └─ 绿队 Pipeline（同上，安全保守视角）
+  │
+  ├─ Phase 3: 裁判评分
+  │     └─ kf-alignment（统一评分标准）
+  │
+  └─ Phase 4: 汇总融合 → 最终方案
+```
 
 ### 关键结论
 
 | 问题 | 答案 |
 |------|------|
-| kf-model-router 是否自动切换模型？ | **否。** 仅提供建议，需用户手动 /set-model |
-| kf-model-router 是否被其他技能自动调用？ | **否。** 所有技能独立运行，不自动触发路由 |
-| gstack/gspowers 是否调用 kf- 系列？ | **否。** 上游技能与 kf- 系列完全隔离 |
-| 哪些技能会内部 spawn Agent？ | kf-multi-team-compete、kf-triple-collaboration |
-| 模型切换用户有感知吗？ | **有。** 每次切换都需手动操作，用户完全可控 |
+| kf-model-router 是否自动切换模型？ | **是。** 技能启动时自动检查并切换，用户无感 |
+| kf-model-router 是否被其他技能自动调用？ | **是。** 所有声明 `recommended_model` 的技能启动时自动调用 |
+| kf-web-search 是否可被自动调用？ | **是。** kf-multi-team-compete agent 按需自动调用搜索资料 |
+| kf-browser-ops 是否可被自动调用？ | **是。** kf-multi-team-compete Stage 3 自动调用做 UI 测试 |
+| kf-alignment 是否可被自动调用？ | **是。** kf-spec、kf-multi-team-compete、kf-prd-generator 均自动调用 |
+| gspowers Pipeline 与 `/夯` 的关系？ | Pipeline 引擎被融入 `/夯` 作为团队内部流水线编排引擎 |
+| `/夯` 是谁的别名？ | `kf-multi-team-compete` 的中文别称，主入口技能 |
+| gstack/gspowers 是否调用 kf- 系列？ | **否。** 上游技能与 kf- 系列隔离，但 Pipeline 引擎被 `/夯` 集成 |
 
-> **建议配比**：pro 20% + flash 70% + 轻量 10%，综合成本约 50%
+> **建议配比**：pro 20% + flash 70% + 轻量 10%，综合成本约 50%。自动切换由 kf-model-router Hook 实现，默认开启。
+
+

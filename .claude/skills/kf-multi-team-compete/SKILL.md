@@ -1,14 +1,16 @@
 ---
 name: kf-multi-team-compete
 description: |
-  多团队竞争评审。swarm 启动真实多 Agent 并发，红蓝绿队各含开发者 agent 按 Pipeline 流水线协作，
-  裁判+汇总师评分融合。触发词："夯"、"多团队竞争"、"竞争评审"、"裁判对比"。
+  多团队竞争评审（中文别称：夯）。swarm 启动真实多 Agent 并发，红蓝绿队各含开发者 agent 按 Pipeline 流水线协作，
+  裁判+汇总师评分融合。Pipeline 引擎来自 gspowers，融入本技能作为团队内部流水线编排。
+  触发词："夯"、"多团队竞争"、"竞争评审"、"裁判对比"。
 triggers:
   - 夯
   - 多团队竞争
   - 竞争评审
   - 裁判对比
   - 多方案对比
+  - /夯
 allowed-tools:
   - Bash
   - Read
@@ -21,16 +23,22 @@ allowed-tools:
   - TaskCreate
   - TaskUpdate
   - SendMessage
+  - WebSearch
+  - WebFetch
 metadata:
   pattern: pipeline + inversion + reviewer
   steps: "4"
   interaction: multi-turn
+  recommended_model: pro
+  pipeline_engine: gspowers
   integrated-skills:
     - kf-alignment
     - kf-code-review-graph
     - kf-spec
     - kf-ui-prototype-generator
     - kf-browser-ops
+    - kf-web-search
+    - kf-model-router
 ---
 
 # 夯 — 多团队竞争评审系统
@@ -89,7 +97,7 @@ Stage 0        Stage 1        Stage 2        Stage 3        Stage 4        Stage
 
 - **执行者**：全栈开发 agent
 - **输入**：Stage 0 对齐记录
-- **动作**：设计数据模型、API 契约、组件树、路由方案
+- **动作**：设计数据模型、API 契约、组件树、路由方案；**可调用 `kf-web-search` 搜索技术方案和最佳实践**
 - **产出**：`{team}-01-architecture.md` — 架构图、模块划分、技术选型理由
 - **门控**：架构方案无歧义，关键决策点已标注
 
@@ -149,9 +157,9 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 | Agent | 流水线阶段 | 联动 |
 |-------|-----------|------|
-| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment` |
-| **集成测试** | Stage 3-4（测试→审查） | `kf-browser-ops`、`kf-code-review-graph` |
-| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator` |
+| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment`、`kf-web-search`（按需搜索技术方案） |
+| **集成测试** | Stage 3-4（测试→审查） | `kf-browser-ops`、`kf-code-review-graph`、`kf-web-search`（按需搜索测试方案） |
+| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator`、`kf-web-search`（按需搜索 UI 参考） |
 
 ---
 
@@ -352,9 +360,12 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 | 技能 | 调用时机 | 用途 |
 |------|---------|------|
+| `kf-model-router` | 启动时 | 自动切换模型：裁判/汇总用 pro，各队 agent 用 flash |
 | `kf-alignment` | Stage 0 + Phase 3 | 动前对齐 + 裁判评分标准对齐 |
 | `kf-spec` | Stage 0 | 读取 Spec 作为需求基线 |
+| `kf-web-search` | Stage 1/2/3（按需） | agent 搜索技术方案、最佳实践、测试方案、UI 参考 |
 | `kf-ui-prototype-generator` | Stage 2 + Stage 5 | 前端设计师 UI 原型生成 |
 | `kf-browser-ops` | Stage 3 | 集成测试 agent 自动化测试 |
 | `kf-code-review-graph` | Stage 4 | 代码审查依赖图谱 |
+| `gspowers` Pipeline 引擎 | Step 0 + Phase 2 | 团队内部流水线阶段编排 + 产物交接（融入夯） |
 | `claude-flow` (swarm_init, agent_spawn, task_orchestrate) | Step 0 + Phase 2 | 多 Agent 并发 + Pipeline DAG 编排 |

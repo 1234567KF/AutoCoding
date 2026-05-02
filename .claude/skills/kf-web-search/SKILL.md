@@ -3,6 +3,7 @@ name: kf-web-search
 description: |
   多引擎智能搜索。针对国内开发、技术文档、国际资料三种场景，
   自动选择最优搜索策略和关键词组合。支持精确搜索、站点限定、时间过滤。
+  可被 kf-multi-team-compete（/夯）的 agent 按需自动调用搜索技术方案。
   运行 /web-search 启动搜索。
 triggers:
   - web-search
@@ -16,6 +17,10 @@ allowed-tools:
   - WebFetch
   - Bash
   - Read
+metadata:
+  called_by:
+    - kf-multi-team-compete  # agent 按需自动调用
+    - kf-spec               # 资料收集阶段
 ---
 
 # 多引擎智能搜索
