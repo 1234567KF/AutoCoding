@@ -1,5 +1,5 @@
 ---
-name: ui-prototype-generator
+name: kf-ui-prototype-generator
 description: 基于 PRD 直接生成符合团队 UI 规范的高保真 HTML 原型页面，可在浏览器中直接预览。触发词："生成原型"、"UI原型"、"页面原型"、"HTML原型"。适用于在开发前快速生成可预览的页面原型，与产品/设计确认布局和交互。
 metadata:
   pattern: generator

@@ -98,7 +98,12 @@ AI 执行任务时，遇到缺工具、页面变化、异常情况，**不要中
 
 > 每个新项目只需执行一次初始化
 
-### 在新项目目录执行
+### 方式一：单文件入口（最简单）
+
+下载仓库中的 `AICoding.md`，放入 AI IDE，对 AI 说"执行安装"即可。
+详见仓库根目录 [AICoding.md](AICoding.md)。
+
+### 方式二：在新项目目录执行
 
 ```powershell
 cd D:\your-new-project
@@ -139,6 +144,13 @@ claude
 | `/review`                 | 代码审查                         | gspowers |
 | `/qa`                     | 浏览器 QA                        | gspowers |
 | `/ship`                   | 发布 PR                          | gspowers |
+| `/review-graph`           | 🆕 代码审查依赖图谱               | kf-code-review-graph |
+| `/web-search [问题]`      | 🆕 多引擎智能搜索                 | kf-web-search        |
+| `/browser-ops`            | 🆕 浏览器自动化操作               | kf-browser-ops       |
+| `/夯 [任务]`              | 🆕 多团队竞争评审                 | kf-multi-team-compete |
+| `/对齐` / `说下你的理解`  | 🆕 对齐工作流                     | kf-alignment         |
+| `模型路由` / `省模式`     | 🆕 模型智能路由                   | kf-model-router      |
+| `spec coding`             | 🆕 Spec 驱动开发                   | kf-spec-coding       |
 
 ---
 
@@ -172,6 +184,26 @@ Agent 共享（在同一个项目内的 agents 共享记忆）
 ├── .claude-flow/                 # ruflo 全局配置
 │   ├── config.yaml             # 全局配置（记忆路径、agent 配置）
 │   └── data/                    # 全局记忆存储（跨项目共享）
+
+项目本地（AutoCoding/）：
+├── .claude/
+│   ├── CLAUDE.md              # 项目指令
+│   ├── settings.json          # 项目配置
+│   └── skills/                # 项目本地技能
+│       ├── kf-spec-coding/    # Spec 驱动开发
+│       ├── kf-code-review-graph/ # 代码审查图谱
+│       ├── kf-web-search/     # 多引擎搜索
+│       ├── kf-browser-ops/    # 浏览器自动化
+│       ├── kf-multi-team-compete/ # 多团队竞争
+│       ├── kf-alignment/      # 对齐工作流
+│       ├── kf-model-router/   # 模型路由
+│       ├── kf-prd-generator/  # PRD 生成
+│       ├── kf-triple-collaboration/ # 三方协作
+│       ├── kf-ui-prototype-generator/ # UI 原型
+│       ├── kf-qoder/          # Qoder 集成
+│       ├── kf-skill-design-expert/ # Skill 设计
+│       ├── gspowers/          # SOP 导航（上游）
+│       └── gstack/            # 产品流程（上游）
 ```
 
 ---

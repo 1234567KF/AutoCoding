@@ -1,25 +1,25 @@
 # AI编程智驾 (AI Programming Autopilot)
 
 > 让 AI 自动驾驶编程全流程，从环境搭建到代码交付，零手动干预。
+> 总纲：[AICoding原则.docx](AICoding原则.docx) — **稳、省、准、测的准、夯、快、懂**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**AI编程智驾** 是一套完整的 AI 编程工作台，集成 Claude Code、gspowers SOP 导航、ruflo 多 Agent 并行执行等工具，让 AI 能够自主完成从环境搭建到代码交付的全流程。
+**AI编程智驾** 是一套完整的 AI 编程工作台，遵循六大原则，集成 Claude Code、gspowers SOP 导航、ruflo 多 Agent 并行执行等工具。
 
 ---
 
-## 核心特性
+## 六大原则
 
-| # | 特性 | 说明 |
-|---|------|------|
-| 1 | **Claude 自动驾驶** | Claude Code + Yolo 模式，AI 自主决策，无需频繁确认 |
-| 2 | **gspowers SOP 导航** | 行业共识的技能规则框架，标准化开发流程 |
-| 3 | **ruflo 多 Agent 并行** | 打通会话记忆，多 Agent 并行/接力执行 |
-| 4 | **RTK Token 节省** | 节省 60-90% Token 消耗，成本大幅降低 |
-| 5 | **markitdown 万物可读** | Markdown/HTML/文档互转，任何格式都能处理 |
-| 6 | **TDD 测试先行** | 强制测试先行模式，质量有保障 |
-| 7 | **通用三方协作** | 货比三家，多角度评审，决策更全面 |
-| 8 | **Pipeline 流水线** | 复杂任务分模块分步骤，依赖自动编排，批量验证 |
+| 原则 | 含义 | 对应技能 |
+|------|------|---------|
+| **稳** | 好用不贵，长期维护 | gspowers、gstack |
+| **省** | 模型搭配，稳固 ROI | kf-model-router、kf-code-review-graph、RTK |
+| **准** | 避免通用大模型哄骗 | kf-web-search |
+| **测的准** | 浏览器自动化测试 | kf-browser-ops |
+| **夯** | 多 Agent 并发竞争碾压 | kf-multi-team-compete、kf-triple-collaboration |
+| **快** | MVP 快速验证，能 Mock 就 Mock | kf-spec-coding、kf-prd-generator |
+| **懂** | 动前对齐，动后 diff | kf-alignment |
 
 ---
 
@@ -46,9 +46,22 @@
 - Node.js >= 18
 - Git
 
-### 方式一：AI 自动安装（推荐）
+### 方式零：单文件入口（最简单）
 
-将本项目给 AI 阅读，AI 自动完成所有配置：
+**只需下载一个文件**，放入 AI IDE，AI 自动完成全部安装：
+
+```
+1. 下载 AICoding.md（本仓库根目录）
+2. 放入任意目录，用 AI IDE（Claude Code / Trae / Cursor）打开
+3. 对 AI 说"执行安装"
+4. AI 自动完成：环境检测 → 下载项目 → 安装配置 → 完成
+```
+
+> `AICoding.md` 只有 ~100 行，内容永远不需要更新——它从 GitHub 实时拉取最新仓库。
+
+### 方式一：AI 自动安装
+
+将整个项目给 AI 阅读，AI 自动完成所有配置：
 
 ```
 1. 将项目文件夹复制到新环境
@@ -79,14 +92,18 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 | 触发词 | 功能 | 来源 |
 |--------|------|------|
 | `/gspowers` | 启动 SOP 流程导航 | gspowers |
-| `/office-hours` | YC 式产品拷问 | gspowers |
-| `/subagent-dev` | 子代理 TDD 开发 | gspowers |
 | `/pipeline-dev` | 多模块流水线开发 | gspowers |
-| `/frontend-slides` | 创建精美 HTML 演示文稿 | frontend-slides |
 | `安全审计` | 多 Agent 安全扫描 | ruflo |
-| `架构评审` | 多 Agent 系统架构评估 | ruflo |
-| `triple [任务]` | 通用三方协作 | ruflo |
+| `triple [任务]` | 通用三方协作 | kf-triple-collaboration |
 | `TDD` | 启用测试先行模式 | 扩展 |
+| `spec coding` / `写spec文档` | Spec 驱动开发 | kf-spec-coding |
+| `/review-graph` | 代码审查依赖图谱 | kf-code-review-graph |
+| `/web-search [问题]` | 多引擎智能搜索 | kf-web-search |
+| `/browser-ops` | 浏览器自动化操作 | kf-browser-ops |
+| `/夯 [任务]` | 多团队竞争评审 | kf-multi-team-compete |
+| `/对齐` / `说下你的理解` | 对齐工作流 | kf-alignment |
+| `模型路由` / `省模式` | 模型智能路由 | kf-model-router |
+| `/prd-generator` | PRD 文档生成 | kf-prd-generator |
 
 ---
 
@@ -109,10 +126,33 @@ AI编程智驾/
 ├── README.md              # 项目入口
 ├── MANUAL.md              # 完整手册
 ├── INSTALL.md             # AI 安装指南
+├── AICoding.md            # 单文件入口（给 AI 看）
 ├── CHANGELOG.md           # 版本记录
+├── CREDITS.md             # 第三方致谢
 ├── LICENSE                # MIT 许可证
-├── CONTRIBUTING.md         # 贡献指南
-├── AI编程智驾框架特性.md   # 框架特性介绍
+├── mvp技术栈.md            # MVP 技术栈定义
+│
+├── .claude/               # Claude Code 项目配置
+│   ├── CLAUDE.md          # 项目指令
+│   ├── settings.json      # 项目配置
+│   ├── agents/            # Agent 定义
+│   ├── commands/          # 自定义命令
+│   └── skills/            # 技能（kf- 系列 + 上游）
+│       ├── kf-spec-coding/         # Spec 驱动开发
+│       ├── kf-code-review-graph/   # 代码审查图谱
+│       ├── kf-web-search/          # 多引擎搜索
+│       ├── kf-browser-ops/         # 浏览器自动化
+│       ├── kf-multi-team-compete/  # 多团队竞争评审
+│       ├── kf-alignment/           # 对齐工作流
+│       ├── kf-model-router/        # 模型路由
+│       ├── kf-prd-generator/       # PRD 生成器
+│       ├── kf-triple-collaboration/# 三方协作
+│       ├── kf-ui-prototype-generator/ # UI 原型
+│       ├── kf-qoder/               # Qoder 集成
+│       ├── kf-skill-design-expert/ # Skill 设计
+│       ├── kf-markdown-to-docx-skill/ # MD→DOCX
+│       ├── gspowers/               # SOP 导航（上游）
+│       └── gstack/                 # 产品流程（上游）
 │
 ├── templates/             # 配置模板
 │   ├── settings.json.template
@@ -121,10 +161,6 @@ AI编程智驾/
 │   ├── pre-commit.template
 │   ├── pipeline-example.md
 │   └── wiki-template.md
-│
-├── skills/                # 技能扩展
-│   ├── prd-generator/     # PRD 生成器
-│   └── frontend-slides/   # HTML 演示文稿生成器
 │
 └── gspowers-pipeline-patch/  # Pipeline 扩展
     ├── pipeline.md

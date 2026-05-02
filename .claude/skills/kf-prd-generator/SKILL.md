@@ -1,5 +1,5 @@
 ---
-name: prd-generator
+name: kf-prd-generator
 description: 将业务需求（口述/Excel/文档）转化为 AI 可执行的结构化 Markdown 格式 PRD 文档。触发词："写PRD"、"需求文档"、"生成PRD"、"需求转化"。适用于将模糊需求转为结构化描述、为后续开发任务提供标准化输入的场景。
 metadata:
   pattern: inversion + generator

@@ -1,5 +1,5 @@
 ---
-name: triple-collaboration
+name: kf-triple-collaboration
 type: collaboration
 description: Red Team vs Blue Team vs Judge - Triple agent collaboration for comprehensive evaluation
 trigger: /triple

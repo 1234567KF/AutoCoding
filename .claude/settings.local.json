@@ -38,7 +38,11 @@
       "Bash(npx -y ruflo@latest --version)",
       "Bash(~/.local/bin/rtk.exe init *)",
       "Bash(~/.local/bin/rtk.exe gain *)",
-      "Bash(echo \"Git: $\\(git --version)"
+      "Bash(echo \"Git: $\\(git --version)",
+      "Bash(mv qoder *)",
+      "Bash(mv prd-generator *)",
+      "Bash(mv triple-collaboration *)",
+      "Bash(mv ui-prototype-generator *)"
     ]
   }
 }

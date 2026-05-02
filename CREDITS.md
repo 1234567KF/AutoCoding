@@ -15,11 +15,12 @@
 
 ```
 AutoCoding/
-├── skills/
-│   ├── prd-generator/      # PRD 生成器（自研）
-│   └── frontend-slides/    # 基于 zarazhangrui/frontend-slides
-├── gspowers-pipeline-patch/ # 基于 fshaan/gspowers 的扩展
-└── templates/              # 配置模板（自研）
+├── .claude/skills/
+│   ├── kf-prd-generator/       # PRD 生成器（自研）
+│   ├── gspowers/               # 基于 fshaan/gspowers
+│   └── gstack/                 # 基于 garrytan/gstack
+├── gspowers-pipeline-patch/    # 基于 fshaan/gspowers 的扩展
+└── templates/                  # 配置模板（自研）
 ```
 
 ---
