@@ -21,7 +21,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**AI编程智驾** 是一套完整的 AI 编程工作台，遵循七大原则，集成 Claude Code、gspowers SOP 导航、claude-flow 多 Agent 并行执行，11 个自建 kf- 系列技能覆盖从 PRD 到 Spec 到编码到审查的全链路。
+**AI编程智驾** 是一套完整的 AI 编程工作台，遵循七大原则，集成 Claude Code、gspowers SOP 导航、claude-flow 多 Agent 并行执行，15 个自建 kf- 系列技能覆盖从 PRD 到 Spec 到编码到审查的全链路。
 
 ---
 
@@ -53,16 +53,17 @@
 
 ---
 
-## 六大原则
+## 七大原则
 
 | 原则 | 含义 | 对应技能 |
 |------|------|---------|
-| **稳** | 好用不贵，长期维护 | gspowers、gstack |
+| **稳** | 好用不贵，长期维护 | gspowers、gstack、kf-skill-design-expert |
 | **省** | 模型搭配，稳固 ROI | kf-model-router、kf-code-review-graph、RTK |
-| **准** | 避免通用大模型哄骗 | kf-web-search kf-browser-ops|
+| **准** | 多源搜索 + 反反爬，精准调研 | kf-web-search、kf-scrapling |
 | **夯** | 多 Agent 并发竞争碾压 | kf-multi-team-compete、kf-triple-collaboration |
-| **快** | MVP 快速验证，能 Mock 就 Mock | kf-spec、kf-prd-generator |
+| **快** | MVP 快速验证，多工具速出原型 | kf-spec、kf-prd-generator、kf-ui-prototype-generator、kf-image-editor、kf-markdown-to-docx-skill |
 | **懂** | 动前对齐，动后 diff | kf-alignment |
+| **测的准** | 自动化测试验证 | kf-browser-ops |
 
 ---
 
@@ -73,6 +74,8 @@
 | 集成项目 | 来源 | 许可证 | 用途 |
 |----------|------|--------|------|
 | [gspowers](https://github.com/fshaan/gspowers) | fshaan | MIT | SOP 流程导航 |
+| [gstack](https://github.com/garrytan/gstack) | garrytan | — | 产品流程框架 |
+| [Scrapling](https://github.com/D4Vinci/Scrapling) | D4Vinci | BSD-3-Clause | Web 爬虫 + 反反爬 |
 | [frontend-slides](https://github.com/zarazhangrui/frontend-slides) | zarazhangrui | MIT | 演示文稿生成 |
 | [ruflo](https://github.com/ruvnet/ruflo) | ruvnet | MIT | 多 Agent 编排 |
 | [RTK](https://github.com/rafaelkallis/rtk) | rafaelkallis | MIT | Token 优化 |
@@ -142,19 +145,21 @@ git clone https://github.com/fshaan/gspowers.git ~/.claude/skills/gspowers
 
 | 触发词 | 功能 | 来源 |
 |--------|------|------|
+| `/go` / `/导航` / `/开始` | 工作流导航 | kf-go |
 | `/gspowers` | 启动 SOP 流程导航 | gspowers |
-| `/pipeline-dev` | 多模块流水线开发 | gspowers |
-| `安全审计` | 多 Agent 安全扫描 | ruflo |
 | `triple [任务]` | 通用三方协作 | kf-triple-collaboration |
-| `TDD` | 启用测试先行模式 | 扩展 |
 | `spec coding` / `写spec文档` | Spec 驱动开发 | kf-spec |
+| `/prd-generator` | PRD 文档生成 | kf-prd-generator |
+| `/夯 [任务]` | 多团队竞争评审（主入口） | kf-multi-team-compete |
+| `/对齐` / `说下你的理解` | 对齐工作流 | kf-alignment |
 | `/review-graph` | 代码审查依赖图谱 | kf-code-review-graph |
 | `/web-search [问题]` | 多引擎智能搜索 | kf-web-search |
-| `/browser-ops` | 浏览器自动化操作 | kf-browser-ops |
-| `/夯 [任务]` | 多团队竞争评审 | kf-multi-team-compete |
-| `/对齐` / `说下你的理解` | 对齐工作流 | kf-alignment |
-| `模型路由` / `省模式` | 模型智能路由 | kf-model-router |
-| `/prd-generator` | PRD 文档生成 | kf-prd-generator |
+| `爬虫` / `抓取` / `scrape` | Web 爬虫 + 反反爬 | kf-scrapling |
+| `/browser-ops` | 浏览器自动化测试 | kf-browser-ops |
+| `P图` / `改图` / `修图` / `去水印` | AI 自然语言 P 图 | kf-image-editor |
+| `转docx` / `markdown转word` | Markdown → DOCX 转换 | kf-markdown-to-docx-skill |
+| `Harness 评审` / `五根铁律审计` | Skill 质量审计 | kf-skill-design-expert |
+| `模型路由` / `省模式` | 模型智能路由（全自动） | kf-model-router |
 
 ---
 
@@ -215,6 +220,8 @@ AI编程智驾/
 │       ├── kf-ui-prototype-generator/ # UI 原型
 │       ├── kf-skill-design-expert/ # Skill 设计
 │       ├── kf-markdown-to-docx-skill/ # MD→DOCX
+│       ├── kf-scrapling/          # Web 爬虫 + 反反爬
+│       ├── kf-image-editor/       # AI 自然语言 P 图
 │       ├── gspowers/               # SOP 导航（上游）
 │       └── gstack/                 # 产品流程（上游）
 │

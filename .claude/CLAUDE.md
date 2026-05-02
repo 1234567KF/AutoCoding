@@ -15,7 +15,8 @@
 | `kf-code-review-graph` | `/review-graph` | 省 | 被 `/夯` Stage 4 自动调用 | 代码审查依赖图谱，轻装上阵快速提取 |
 | `kf-web-search` | `/web-search` | 准 | 被 `/夯` agent 按需自动调用 | 多引擎智能搜索，agent 自动搜索技术方案 |
 | `kf-browser-ops` | `/browser-ops` | 测的准 | 被 `/夯` Stage 3 自动调用 | 浏览器自动化测试，Playwright 复现 bug |
-| `kf-multi-team-compete` | **`/夯`** | 夯 | **主入口**，自动调用 7 个技能 + Pipeline 引擎 | 红蓝绿队多 Agent 并发竞争评审 |
+| `kf-scrapling` | — | 准 | 被 `/夯` Stage 1/2/3 按需自动调用 | Web 爬虫+反反爬，深度数据采集，替代/补充 web-search |
+| `kf-multi-team-compete` | **`/夯`** | 夯 | **主入口**，自动调用 10 个技能 + Pipeline 引擎 | 红蓝绿队多 Agent 并发竞争评审 |
 | `kf-alignment` | `/对齐` | 懂 | 被 kf-spec、`/夯`、kf-prd-generator 自动调用 | 对齐工作流：动前谈理解，动后谈 diff |
 | `kf-model-router` | 模型路由 | 省 | **自动触发**：所有技能启动时自动检查并切换模型 | 模型智能路由：计划 pro，执行 flash，用户无感 |
 | `kf-prd-generator` | `/prd-generator` | 快 | 自动调用 kf-alignment（产出后 Hook 对齐）；被 `/夯` Pre-Stage 自动调用 | SDD Excel → PRD 生成器 |
@@ -59,6 +60,7 @@
     ├── kf-ui-prototype-generator/ # UI 原型
     ├── kf-skill-design-expert/ # Skill 设计
     ├── kf-markdown-to-docx-skill/ # MD→DOCX
+    ├── kf-scrapling/          # Web 爬虫 + 反反爬
     ├── gspowers/              # SOP 导航（上游）
     └── gstack/               # 产品流程（上游）
 ```
@@ -78,7 +80,7 @@ claude
 | 触发词 | 技能 | 原则 | 自动调用 |
 |--------|------|------|---------|
 | `/go` / `/导航` / `/开始` | kf-go | 快 | — |
-| `/夯 [任务]` | kf-multi-team-compete | 夯 | 自动调用 7 个子技能 |
+| `/夯 [任务]` | kf-multi-team-compete | 夯 | 自动调用 10 个子技能 |
 | `spec coding` / `写spec文档` | kf-spec | 快 | 自动调用 kf-alignment + kf-model-router |
 | `/对齐` / `说下你的理解` | kf-alignment | 懂 | 被多个技能自动调用 |
 | `/review-graph` | kf-code-review-graph | 省 | 被 `/夯` 自动调用 |
@@ -89,6 +91,9 @@ claude
 | `triple [任务]` | kf-triple-collaboration | 夯 | 轻量版 `/夯` |
 | `模型路由` / `省模式` | kf-model-router | 省 | **全自动**，用户无感 |
 | `Harness 评审` / `五根铁律审计` | kf-skill-design-expert | 稳 | 全路径扫描，评分矩阵 + 缺陷分级 |
+| `P图` / `改图` / `修图` / `去水印` | kf-image-editor | 快 | AI 自然语言 P 图，被 `/夯` Stage 2/5 调用 |
+| `转docx` / `markdown转word` | kf-markdown-to-docx-skill | — | Markdown → DOCX 转换 |
+| `爬虫` / `抓取` / `scrape` / `反反爬` | kf-scrapling | 准 | Web 爬虫，被 `/夯` Stage 1/2/3 按需调用 |
 
 ## 自动调用链速览
 
@@ -103,7 +108,9 @@ claude
        ├─ kf-alignment   ← 需求对齐（Stage 0）
        ├─ kf-spec        ← 需求基线（Stage 0）
        ├─ kf-web-search  ← 技术资料搜索（Stage 1/2/3 按需）
+       ├─ kf-scrapling  ← 深度网页抓取（Stage 1/2/3 按需，反反爬）
        ├─ kf-ui-prototype-generator ← UI 原型（Stage 2/5）
+       ├─ kf-image-editor ← AI P 图（Stage 2/5）
        ├─ kf-browser-ops ← 自动化测试（Stage 3）
        └─ kf-code-review-graph ← 代码审查（Stage 4）
 ```

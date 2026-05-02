@@ -24,7 +24,6 @@ metadata:
   interaction: multi-turn
   called_by:
     - kf-multi-team-compete  # Stage 2 UI 原型配图 / Stage 5 方案配图
-integrated-skills: []
 recommended_model: flash
 ---
 

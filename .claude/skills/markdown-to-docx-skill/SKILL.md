@@ -1,6 +1,7 @@
 ---
 name: markdown-to-docx
 description: Convert one Markdown file or a top-level folder of Markdown articles into DOCX with pandoc, preserving Obsidian image embeds, shared resources folders, captions, Mermaid diagrams, and optional Word reference templates. Use when exporting Markdown to Word documents.
+recommended_model: flash
 ---
 
 # Skill: Markdown to DOCX

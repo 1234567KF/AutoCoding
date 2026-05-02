@@ -7,6 +7,8 @@
 | 项目 | 来源 | 许可证 | 用途 |
 |------|------|--------|------|
 | **gspowers** | https://github.com/fshaan/gspowers | MIT | SOP 流程导航框架 |
+| **gstack** | https://github.com/garrytan/gstack | — | 产品流程框架 |
+| **Scrapling** | https://github.com/D4Vinci/Scrapling | BSD-3-Clause | Web 爬虫框架，自适应反反爬 + Spider 并发 |
 | **frontend-slides** | https://github.com/zarazhangrui/frontend-slides | MIT | HTML 演示文稿生成器 |
 | **ruflo** | https://github.com/ruvnet/ruflo | MIT | 多 Agent 编排与记忆系统 |
 | **RTK** | https://github.com/rafaelkallis/rtk | MIT | Token 消耗优化 |
@@ -17,6 +19,7 @@
 AICoding/
 ├── .claude/skills/
 │   ├── kf-prd-generator/       # PRD 生成器（自研）
+│   ├── kf-scrapling/           # 基于 D4Vinci/Scrapling
 │   ├── gspowers/               # 基于 fshaan/gspowers
 │   └── gstack/                 # 基于 garrytan/gstack
 ├── gspowers-pipeline-patch/    # 基于 fshaan/gspowers 的扩展
@@ -50,6 +53,12 @@ AICoding/
 - **来源**: https://github.com/rafaelkallis/rtk
 - **描述**: CLI 代理工具，大幅降低 Token 消耗
 - **本项目使用**: 命令输出压缩与优化
+
+### Scrapling
+- **许可证**: BSD-3-Clause License
+- **来源**: https://github.com/D4Vinci/Scrapling
+- **描述**: 自适应 Web 爬虫框架，支持反反爬绕过（Cloudflare Turnstile）、隐身浏览器、Spider 并发框架
+- **本项目使用**: kf-scrapling 技能，作为 /夯 调研阶段的深度数据采集工具
 
 ---
 
@@ -90,4 +99,4 @@ SOFTWARE.
 
 ---
 
-*最后更新: 2026-04-28*
+*最后更新: 2026-05-02*

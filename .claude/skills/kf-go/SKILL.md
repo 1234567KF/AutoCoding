@@ -19,12 +19,24 @@ metadata:
   interaction: multi-turn
   tracks: "2"
   integrated-skills:
+    # 核心流程
     - kf-prd-generator
     - kf-ui-prototype-generator
     - kf-spec
     - kf-multi-team-compete
     - kf-code-review-graph
     - kf-alignment
+    # 工具技能
+    - kf-web-search
+    - kf-scrapling
+    - kf-browser-ops
+    - kf-image-editor
+    - kf-markdown-to-docx-skill
+    # 质量/协作
+    - kf-triple-collaboration
+    - kf-skill-design-expert
+    # 基础设施（自动触发）
+    - kf-model-router
 recommended_model: flash
 ---
 
@@ -121,6 +133,15 @@ recommended_model: flash
 ★ 收尾期 ─────────────────────────────────────────────
 ├─ [{status}] /kf-code-review-graph → 代码审查图谱
 └─ [{status}] 完成
+
+★ 辅助工具（按需，通常被 /夯 自动调用）─────────────────
+├── /web-search → 多引擎技术搜索
+├── /scrapling → 深度网页抓取 + 反反爬
+├── /browser-ops → 浏览器自动化测试
+├── /image-editor → AI 自然语言 P 图
+├── /对齐 → 事前/事后对齐
+├── triple → 三方协作评审（轻量版 /夯）
+└── Harness 评审 → 五根铁律全路径审计
 ```
 
 状态标记：✅ 已完成 / 🔄 当前 / ⏭️ 跳过 / ⬜ 待执行

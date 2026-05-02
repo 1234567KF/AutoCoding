@@ -38,6 +38,7 @@ metadata:
     - kf-ui-prototype-generator
     - kf-browser-ops
     - kf-web-search
+    - kf-scrapling
     - kf-prd-generator
     - kf-model-router
     - kf-image-editor
@@ -136,7 +137,7 @@ Pre-Stage     Stage 0        Stage 1        Stage 2        Stage 3        Stage 
 
 - **执行者**：全栈开发 agent
 - **输入**：Stage 0 对齐记录
-- **动作**：设计数据模型、API 契约、组件树、路由方案；**可调用 `kf-web-search` 搜索技术方案和最佳实践**
+- **动作**：设计数据模型、API 契约、组件树、路由方案；**可调用 `kf-web-search` 搜索技术方案和最佳实践，或 `kf-scrapling` 深度抓取参考实现**
 - **产出**：`{team}-01-architecture.md` — 架构图、模块划分、技术选型理由
 - **门控**：架构方案无歧义，关键决策点已标注
 
@@ -196,9 +197,9 @@ Stage0 → Stage1 → Stage2 → Stage3 → Stage4 → Stage5
 
 | Agent | 流水线阶段 | 联动 | 模型 |
 |-------|-----------|------|------|
-| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment`、`kf-web-search`（按需搜索技术方案） | `sonnet`（flash） |
+| **全栈开发** | Stage 0-2（对齐→架构→编码） | `kf-spec`、`kf-alignment`、`kf-web-search`（按需搜索技术方案）、`kf-scrapling`（按需深度数据采集） | `sonnet`（flash） |
 | **集成测试** | Stage 3-4（测试→审查） | `kf-browser-ops`、`kf-code-review-graph`、`kf-web-search`（按需搜索测试方案） | `sonnet`（flash） |
-| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator`、`kf-web-search`（按需搜索 UI 参考） | `sonnet`（flash） |
+| **前端设计师** | Stage 2 UI 并行 + Stage 5 方案汇总 | `kf-ui-prototype-generator`、`kf-web-search`（按需搜索 UI 参考）、`kf-scrapling`（按需抓取设计参考） | `sonnet`（flash） |
 | **协调者（本 Skill）** | Pre-Stage + Phase 1-4（任务拆解→裁判评分→汇总融合） | 全部 integrated-skills | `opus`（pro） |
 
 ---
@@ -495,6 +496,7 @@ Phase 4 汇总融合完成后 MUST 将最终评分卡和方案摘要写入 `memo
 | `kf-alignment` | Stage 0 + Phase 3 | 动前对齐 + 裁判评分标准对齐 |
 | `kf-spec` | Stage 0 | 读取 Spec/PRD 作为需求基线 |
 | `kf-web-search` | Stage 1/2/3（按需） | agent 搜索技术方案、最佳实践、测试方案、UI 参考 |
+| `kf-scrapling` | Stage 1/2/3（按需） | agent 深度网页抓取（反反爬），补充 web-search 无法访问的站点 |
 | `kf-ui-prototype-generator` | Stage 2 + Stage 5 | 前端设计师 UI 原型生成 |
 | `kf-browser-ops` | Stage 3 | 集成测试 agent 自动化测试 |
 | `kf-code-review-graph` | Stage 4 | 代码审查依赖图谱 |
