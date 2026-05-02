@@ -14,6 +14,55 @@ recommended_model: pro
 
 ---
 
+## 对齐模式
+
+本 Skill 支持两种模式，由调用方根据执行上下文选择：
+
+### recording 模式（子 Agent，默认）
+
+**适用**：后台 spawn 的 agent（如 `/夯` 三队 agent）无法接触用户时。
+
+**规则**：
+- MUST NOT 向用户提问或等待确认
+- 遇到歧义 → 记录为"假设"，选最合理的默认值，标注不确定性
+- 假设优先级：PRD/Spec 已有信息 > 项目现有代码模式 > 行业通用实践 > 保守方案（标注 `[ASSUMPTION:UNCERTAIN]`）
+- 若歧义影响方案核心竞争力，标注 `[ASSUMPTION:CRITICAL]`，提醒裁判关注
+- 三队共享同一份假设清单（协调者在 swarm 广播中注入）
+
+**产出**：结构化对齐记录 → `{team}-00-alignment.md`
+
+### interactive 模式（协调者）
+
+**适用**：协调者与用户直接对话时（kf-multi-team-compete 的 Phase 1、kf-spec 的 Step 1、kf-prd-generator 的 Phase 1）。
+
+**规则**：
+- MUST 给出 2-4 个具体选项（选择题），附带各自的后果说明
+- 禁止开放提问（如"你觉得呢？"）—— 用户只做选择，不代替 AI 思考
+- 选项覆盖关键决策点：技术栈、范围边界、性能档位、安全级别
+- 用户选择后锁定决策，不再重复提问
+
+**选项模板**：
+```
+关于 [决策点]，方案如下：
+A. [方案名] — [一行说明]，后果：[选 A 会怎样]
+B. [方案名] — [一行说明]，后果：[选 B 会怎样]
+C. [方案名] — [一行说明]，后果：[选 C 会怎样]
+请选 A/B/C（或提供补充信息）：
+```
+
+### 模式选择规则
+
+| 调用场景 | 模式 | 说明 |
+|---------|------|------|
+| `/夯` 协调者 Phase 1 任务拆解 | interactive | 协调者与用户对话，必要时给选项 |
+| `/夯` 三队 agent Stage 0 | recording | agent 无法接触用户，记录假设 |
+| kf-spec Step 1 需求澄清 | interactive | Step 0 已有 MCQ 选项 |
+| kf-prd-generator Phase 1 需求问询 | interactive | 已有结构化问题链 |
+| kf-alignment 被用户直接调用 | interactive | `/对齐`、`说下你的理解` |
+| 其他技能内部自动调用 | recording | 仅记录，不阻塞流程 |
+
+---
+
 ## 工作流
 
 ### Phase 1 — 动前对齐（Before Action）
@@ -36,7 +85,8 @@ recommended_model: pro
 - 风险：[可能遇到的问题]
 ```
 
-**等待用户确认后再开始执行。**
+**interactive 模式下**，等待用户确认后再开始执行。
+**recording 模式下**，自动推进到下一阶段，对齐记录作为假设基线存档。
 
 ### Phase 2 — 动后复盘（After Action）
 

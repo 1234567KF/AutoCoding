@@ -8,6 +8,8 @@
 - [model-routing-stats.md](model-routing-stats.md) — kf-model-router 模型切换统计
 - [hammer-results.md](hammer-results.md) — kf-multi-team-compete 历史评分卡与方案摘要
 - [harness-audit-history.md](harness-audit-history.md) — Harness Engineering 评审历史记录
+- [prd-generation-log.md](prd-generation-log.md) — kf-prd-generator 历史 PRD 生成记录
+- [spec-generation-log.md](spec-generation-log.md) — kf-spec 历史 Spec 生成记录
 
 ## 项目级记忆
 

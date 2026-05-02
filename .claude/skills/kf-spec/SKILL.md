@@ -23,7 +23,8 @@ You are a Spec Coding orchestrator. You coordinate the full lifecycle from raw r
 ## Context Collection — Before Starting
 
 Gather project context automatically:
-1. Read any `@file` referenced documents to understand existing architecture
+1. **记忆基线加载（铁律 4）**：MUST 先读取 `memory/spec-generation-log.md`（如存在）中最近 3 条记录，了解历史 Spec 生成的遗留问题和确认模式，避免重复讨论已确认的决策
+2. Read any `@file` referenced documents to understand existing architecture
 2. If historical spec documents exist, read them to avoid duplicate definitions
 3. Inspect the project's module structure to understand layering and naming conventions
 4. If user provides a UI prototype via `@file`, load it as optional visual design input — used in Step 1 for understanding page structure and interaction intent
@@ -426,6 +427,23 @@ All artifacts are output to the spec directory determined in Step 5 (`docs/{vers
 | Step 6 | 每个 task 产出后运行 typecheck/lint | 失败则阻断后续 task |
 
 验证原则：**Plan → Build → Verify → Fix** 四步强制循环，不接受主观"我觉得好了"。
+
+---
+
+## Harness 记忆持久化（铁律 4）
+
+Step 5 确认 Spec v1.0 后 MUST 将摘要写入 `memory/spec-generation-log.md`：
+
+```markdown
+### {date} — {feature-name} v{version}
+- **输入来源**：{PRD / 口述 / SDD Excel}
+- **核心模块**：{模块列表}
+- **技术栈**：{选定的技术栈}
+- **产出文件**：{spec.md, api-contract.md, data-model.md, ...}
+- **遗留问题**：{未确认事项}
+```
+
+下次 kf-spec 启动时自动加载最近 3 条记录作为基线。
 
 ---
 
