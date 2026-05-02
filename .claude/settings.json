@@ -56,13 +56,8 @@
     ],
     "UserPromptSubmit": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cmd /c node %CLAUDE_PROJECT_DIR%/.claude/helpers/hook-handler.cjs route",
-            "timeout": 10000
-          }
-        ]
+        "matcher": "",
+        "hooks": []
       }
     ],
     "SessionStart": [
@@ -79,7 +74,6 @@
             "timeout": 8000
           }
         ]
-      }
     ],
     "SessionEnd": [
       {
@@ -131,7 +125,6 @@
             "timeout": 6000
           }
         ]
-      }
     ],
     "SubagentStart": [
       {
@@ -193,8 +186,11 @@
     "CLAUDE_FLOW_V3_ENABLED": "true",
     "CLAUDE_FLOW_HOOKS_ENABLED": "true",
     "CLAUDECODENOFLICKER": "1",
-    "CLAUDE_CODE_ALWAYS_THINKING": "1",
-    "CLAUDE_CODE_VERBOSE": "1"
+    "CLAUDE_CODE_ALWAYS_THINKING": "0",
+    "CLAUDE_CODE_VERBOSE": "1",
+    "_ux_comment_green_v2": "=== 绿队安全版 UX 增强 v2.0 === 以下为保守配置，风险: 低。回滚: 删除此行及下面2行",
+    "CLAUDE_CODE_ENABLE_THINKING": "0",
+    "CLAUDE_CODE_STREAM_DELAY": "0"
   },
   "model": "deepseek-v4-pro",
   "claudeFlow": {

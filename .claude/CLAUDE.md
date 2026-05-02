@@ -112,7 +112,7 @@ claude
        ├─ kf-ui-prototype-generator ← UI 原型（Stage 2/5）
        ├─ kf-image-editor ← AI P 图（Stage 2/5）
        ├─ kf-browser-ops ← 自动化测试（Stage 3）
-       └─ kf-code-review-graph ← 代码审查（Stage 4）
+       ├─ kf-code-review-graph ← 代码审查（Stage 4）
 ```
 
 ## 全局依赖
